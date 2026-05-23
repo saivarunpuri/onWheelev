@@ -6,6 +6,7 @@ import {
   CreditCard, Eye
 } from 'lucide-react';
 import axios from 'axios';
+import API from '../config';
 
 const AdminDashboard = ({ user }) => {
   const navigate = useNavigate();
@@ -61,7 +62,7 @@ const AdminDashboard = ({ user }) => {
       const token = localStorage.getItem('token');
       
       // Analytics
-      const analyticsRes = await axios.get('http://localhost:5000/api/trips/analytics', {
+      const analyticsRes = await axios.get(`${API}/api/trips/analytics`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (analyticsRes.data.success) {
@@ -69,19 +70,19 @@ const AdminDashboard = ({ user }) => {
       }
 
       // Providers
-      const providersRes = await axios.get('http://localhost:5000/api/providers');
+      const providersRes = await axios.get(`${API}/api/providers`);
       if (providersRes.data.success) {
         setProviders(providersRes.data.providers);
       }
 
       // Stations
-      const stationsRes = await axios.get('http://localhost:5000/api/stations');
+      const stationsRes = await axios.get(`${API}/api/stations`);
       if (stationsRes.data.success) {
         setStations(stationsRes.data.stations);
       }
 
       // Users
-      const usersRes = await axios.get('http://localhost:5000/api/auth/users', {
+      const usersRes = await axios.get(`${API}/api/auth/users`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (usersRes.data.success) {
@@ -89,7 +90,7 @@ const AdminDashboard = ({ user }) => {
       }
 
       // Pending Manual Payments [NEW]
-      const paymentsRes = await axios.get('http://localhost:5000/api/payments/admin/requests', {
+      const paymentsRes = await axios.get(`${API}/api/payments/admin/requests`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (paymentsRes.data.success) {
@@ -110,7 +111,7 @@ const AdminDashboard = ({ user }) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post('http://localhost:5000/api/stations', newStation, {
+      const response = await axios.post(`${API}/api/stations`, newStation, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data.success) {
@@ -134,7 +135,7 @@ const AdminDashboard = ({ user }) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post('http://localhost:5000/api/providers', newProvider, {
+      const response = await axios.post(`${API}/api/providers`, newProvider, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data.success) {
@@ -159,17 +160,17 @@ const AdminDashboard = ({ user }) => {
     try {
       const token = localStorage.getItem('token');
       if (type === 'station') {
-        await axios.delete(`http://localhost:5000/api/stations/${id}`, {
+        await axios.delete(`${API}/api/stations/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setStations(stations.filter(s => s._id !== id));
       } else if (type === 'provider') {
-        await axios.delete(`http://localhost:5000/api/providers/${id}`, {
+        await axios.delete(`${API}/api/providers/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setProviders(providers.filter(p => p._id !== id));
       } else if (type === 'user') {
-        await axios.delete(`http://localhost:5000/api/auth/users/${id}`, {
+        await axios.delete(`${API}/api/auth/users/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setUsers(users.filter(u => u._id !== id));
@@ -186,7 +187,7 @@ const AdminDashboard = ({ user }) => {
   const handleResolvePayment = async (payId, status, notes) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post(`http://localhost:5000/api/payments/admin/resolve/${payId}`, {
+      const response = await axios.post(`${API}/api/payments/admin/resolve/${payId}`, {
         status,
         adminNotes: notes || ''
       }, {

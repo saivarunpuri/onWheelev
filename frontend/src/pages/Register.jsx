@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserPlus, Mail, Lock, User, Car, Battery, AlertCircle } from 'lucide-react';
 import axios from 'axios';
+import API from '../config';
 
 const EV_MODELS = [
   { name: 'Tata Nexon EV Max', capacity: 40.5 },
@@ -28,7 +29,7 @@ const Register = ({ onRegisterSuccess }) => {
     const activeModel = EV_MODELS.find(m => m.name === vehicle) || EV_MODELS[0];
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/register', {
+      const response = await axios.post(`${API}/api/auth/register`, {
         name,
         email,
         password,

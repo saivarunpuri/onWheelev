@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Navigation2, Battery, AlertCircle, Zap, Car, ShieldAlert, Lock } from 'lucide-react';
 import axios from 'axios';
+import API from '../config';
 import InteractiveMap from '../components/InteractiveMap';
 
 const EV_MODELS = [
@@ -233,7 +234,7 @@ const TripPlanner = ({ setLastPlannerOutput, user, onProfileUpdate }) => {
       const token = localStorage.getItem('token');
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-      const response = await axios.post('http://localhost:5000/api/trips/plan', {
+      const response = await axios.post(`${API}/api/trips/plan`, {
         source,
         destination,
         startBattery: battery,

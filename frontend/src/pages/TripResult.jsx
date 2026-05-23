@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Navigation2, Zap, Save, CheckCircle2, AlertTriangle, Calendar, Clock } from 'lucide-react';
 import axios from 'axios';
+import API from '../config';
 import InteractiveMap from '../components/InteractiveMap';
 
 const TripResult = ({ tripOutput, user }) => {
@@ -36,7 +37,7 @@ const TripResult = ({ tripOutput, user }) => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        'http://localhost:5000/api/trips/save',
+        `${API}/api/trips/save`,
         {
           sourceName: source,
           destName: destination,

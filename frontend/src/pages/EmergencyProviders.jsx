@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShieldAlert, RefreshCw, Zap, Star, Navigation2, Compass, AlertOctagon } from 'lucide-react';
 import axios from 'axios';
+import API from '../config';
 import InteractiveMap from '../components/InteractiveMap';
 
 const EmergencyProviders = () => {
@@ -52,7 +53,7 @@ const EmergencyProviders = () => {
   const handleScanTrigger = async () => {
     setSearching(true);
     try {
-      const response = await axios.get('http://localhost:5000/api/providers');
+      const response = await axios.get(`${API}/api/providers`);
       setTimeout(() => {
         if (response.data.success && response.data.providers.length > 0) {
           const formatted = response.data.providers.map((p, idx) => ({

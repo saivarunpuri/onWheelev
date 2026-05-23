@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import API from './config';
 
 // Import Layout Component
 import Navbar from './components/Navbar';
@@ -33,7 +34,7 @@ function App() {
       const token = localStorage.getItem('token');
       if (token) {
         try {
-          const res = await axios.get('http://localhost:5000/api/auth/profile', {
+          const res = await axios.get(`${API}/api/auth/profile`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           if (res.data.success) {

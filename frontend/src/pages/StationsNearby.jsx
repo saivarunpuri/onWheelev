@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, SlidersHorizontal, Zap, Clock, Compass, Shield, PlusCircle } from 'lucide-react';
 import axios from 'axios';
+import API from '../config';
 import InteractiveMap from '../components/InteractiveMap';
 
 const StationsNearby = () => {
@@ -18,7 +19,7 @@ const StationsNearby = () => {
       if (chargerType) query.push(`chargerType=${chargerType}`);
       const queryString = query.length > 0 ? `?${query.join('&')}` : '';
 
-      const response = await axios.get(`http://localhost:5000/api/stations${queryString}`);
+      const response = await axios.get(`${API}/api/stations${queryString}`);
       if (response.data.success) {
         setStations(response.data.stations);
         if (response.data.stations.length > 0) {

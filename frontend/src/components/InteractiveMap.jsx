@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Play, Pause, Navigation, Compass, AlertTriangle, Zap, Truck, CheckCircle2 } from 'lucide-react';
 import axios from 'axios';
+import API from '../config';
 
 const InteractiveMap = ({ 
   mode = 'browse', // 'browse', 'route', 'emergency', 'tracking'
@@ -85,7 +86,7 @@ const InteractiveMap = ({
     stationMarkersGroupRef.current.clearLayers();
 
     try {
-      const res = await axios.get(`http://localhost:5000/api/stations?lat=${lat}&lng=${lng}`);
+      const res = await axios.get(`${API}/api/stations?lat=${lat}&lng=${lng}`);
       if (res.data.success && res.data.stations.length > 0) {
         plotStations(res.data.stations);
         return;

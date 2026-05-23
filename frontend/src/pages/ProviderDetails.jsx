@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Star, Zap, Phone, ShieldCheck, MapPin, Truck, HelpCircle } from 'lucide-react';
 import axios from 'axios';
+import API from '../config';
 
 const ProviderDetails = () => {
   const location = useLocation();
@@ -27,7 +28,7 @@ const ProviderDetails = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        `http://localhost:5000/api/providers/${provider.id}/request`,
+        `${API}/api/providers/${provider.id}/request`,
         {},
         {
           headers: token ? { Authorization: `Bearer ${token}` } : {}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Compass, ChevronRight, Zap, History, Calendar, Trash2 } from 'lucide-react';
 import axios from 'axios';
+import API from '../config';
 
 const SavedTrips = ({ setLastPlannerOutput }) => {
   const [trips, setTrips] = useState([]);
@@ -12,7 +13,7 @@ const SavedTrips = ({ setLastPlannerOutput }) => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:5000/api/trips/history', {
+      const response = await axios.get(`${API}/api/trips/history`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data.success) {
@@ -54,7 +55,7 @@ const SavedTrips = ({ setLastPlannerOutput }) => {
     if (!window.confirm('Are you sure you want to delete this trip history record?')) return;
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.delete(`http://localhost:5000/api/trips/history/${id}`, {
+      const response = await axios.delete(`${API}/api/trips/history/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data.success) {

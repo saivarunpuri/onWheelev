@@ -6,6 +6,7 @@ import {
   Trash2, Edit3, Plus, X, Lock, ShieldCheck, Package
 } from 'lucide-react';
 import axios from 'axios';
+import API from '../config';
 import { motion } from 'framer-motion';
 
 /* ═══════════════════════════════════════════════════════════════
@@ -113,7 +114,7 @@ const TokenRefillPaymentModal = ({ user, onClose, onSuccess }) => {
       try {
         const token = localStorage.getItem('token');
         const res = await axios.post(
-          'http://localhost:5000/api/auth/profile/planner/refill',
+          `${API}/api/auth/profile/planner/refill`,
           { tokens: selectedBundle.tokens, cost: payMethod === 'wallet' ? selectedBundle.cost : 0 },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -442,7 +443,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        'http://localhost:5000/api/auth/profile/locations',
+        `${API}/api/auth/profile/locations`,
         {
           name: locName,
           address: locAddress,
@@ -488,7 +489,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.delete(
-        `http://localhost:5000/api/auth/profile/locations/${locId}`,
+        `${API}/api/auth/profile/locations/${locId}`,
         {
           headers: { Authorization: `Bearer ${token}` }
         }
@@ -517,7 +518,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        'http://localhost:5000/api/auth/profile/wallet/refill',
+        `${API}/api/auth/profile/wallet/refill`,
         { amount: parseFloat(refillAmount) },
         {
           headers: { Authorization: `Bearer ${token}` }
@@ -572,7 +573,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        'http://localhost:5000/api/auth/profile/planner/refill',
+        `${API}/api/auth/profile/planner/refill`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` }
@@ -616,7 +617,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
     setUploadLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const authRes = await axios.get('http://localhost:5000/api/payments/imagekit-auth', {
+      const authRes = await axios.get(`${API}/api/payments/imagekit-auth`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -678,7 +679,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        'http://localhost:5000/api/payments/verify-submit',
+        `${API}/api/payments/verify-submit`,
         {
           amount: parseFloat(manualAmount),
           paymentMethod: manualMethod,
@@ -699,7 +700,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
         setUploadSuccess(false);
         
         // Refresh manual verification requests
-        const reqsRes = await axios.get('http://localhost:5000/api/payments/my-requests', {
+        const reqsRes = await axios.get(`${API}/api/payments/my-requests`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (reqsRes.data.success) {
@@ -776,7 +777,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.put(
-        'http://localhost:5000/api/auth/profile',
+        `${API}/api/auth/profile`,
         {
           vehicleModel: selectedModel,
           batteryCapacity: parseFloat(selectedCapacity)
@@ -818,7 +819,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        'http://localhost:5000/api/auth/profile/vehicles',
+        `${API}/api/auth/profile/vehicles`,
         {
           model: newModel,
           capacity: parseFloat(newCapacity),
@@ -871,7 +872,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        `http://localhost:5000/api/auth/profile/vehicles/${vehicleId}/select`,
+        `${API}/api/auth/profile/vehicles/${vehicleId}/select`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` }
@@ -904,7 +905,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.put(
-        `http://localhost:5000/api/auth/profile/vehicles/${editingVehicleId}`,
+        `${API}/api/auth/profile/vehicles/${editingVehicleId}`,
         {
           model: editModel,
           capacity: parseFloat(editCapacity),
@@ -956,7 +957,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.delete(
-        `http://localhost:5000/api/auth/profile/vehicles/${vehicleId}`,
+        `${API}/api/auth/profile/vehicles/${vehicleId}`,
         {
           headers: { Authorization: `Bearer ${token}` }
         }
@@ -1006,7 +1007,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
       const token = localStorage.getItem('token');
 
       // Fetch user's dynamic history from active records
-      const historyRes = await axios.get('http://localhost:5000/api/trips/history', {
+      const historyRes = await axios.get(`${API}/api/trips/history`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -1043,7 +1044,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
         }
       }
       // Fetch manual payment requests
-      const paymentsRes = await axios.get('http://localhost:5000/api/payments/my-requests', {
+      const paymentsRes = await axios.get(`${API}/api/payments/my-requests`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (paymentsRes.data.success) {
