@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { ShieldCheck, Truck, Phone, MessageSquare, ArrowLeft, RefreshCw, Compass } from 'lucide-react';
 import InteractiveMap from '../components/InteractiveMap';
+import toast from 'react-hot-toast';
 
 const LiveTracking = () => {
   const location = useLocation();
@@ -111,7 +112,7 @@ const LiveTracking = () => {
             </a>
             
             <button
-              onClick={() => alert('Opening Secure Chat Intercom with Ramesh...')}
+              onClick={() => toast.success('Opening Secure Chat Intercom with Ramesh...')}
               className="px-4 py-3 bg-cyber-hover hover:bg-cyber-accent hover:text-black border border-cyber-gray-800 hover:border-cyber-accent text-xs font-extrabold rounded-xl transition text-center flex items-center justify-center text-white"
             >
               <MessageSquare className="w-4 h-4" />

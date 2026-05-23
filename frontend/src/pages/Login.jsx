@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Mail, Lock, LogIn, AlertCircle } from 'lucide-react';
 import axios from 'axios';
 import API from '../config';
+import toast from 'react-hot-toast';
 
 const Login = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState('');
@@ -51,7 +52,7 @@ const Login = ({ onLoginSuccess }) => {
         // Let's create an elegant local mock session matching Admin if admin credentials entered
         const mockUser = {
           _id: isAdmin ? 'admin-id-123' : 'user-id-987',
-          name: isAdmin ? 'Varun EV Admin' : 'Arjun EV Driver',
+          name: isAdmin ? 'Varun EV Admin' : email.split('@')[0],
           email: email,
           vehicleModel: 'Tata Nexon EV Max',
           batteryCapacity: 40.5,
@@ -104,7 +105,7 @@ const Login = ({ onLoginSuccess }) => {
           <div className="flex flex-col space-y-2">
             <div className="flex justify-between items-center">
               <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Password</label>
-              <a href="#" onClick={(e) => { e.preventDefault(); alert('Use varun2004.pvt@gmail.com / admin123 as standard credentials.'); }} className="text-[10px] text-cyber-green hover:underline">Forgot?</a>
+              <a href="#" onClick={(e) => { e.preventDefault(); toast.error('Use varun2004.pvt@gmail.com / admin123 as standard credentials.'); }} className="text-[10px] text-cyber-green hover:underline">Forgot?</a>
             </div>
             <div className="relative">
               <input

@@ -246,6 +246,8 @@ const AdminDashboard = ({ user }) => {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data.success) {
+        localStorage.setItem('admin_configured_upi', upiId);
+        localStorage.setItem('admin_configured_qr', qrCodeUrl);
         setMessage('Global payment config settings updated successfully!');
       }
     } catch (err) {

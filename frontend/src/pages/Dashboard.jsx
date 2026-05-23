@@ -8,6 +8,7 @@ import {
 import axios from 'axios';
 import API from '../config';
 import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 
 /* ═══════════════════════════════════════════════════════════════
    TOKEN REFILL PAYMENT MODAL
@@ -456,7 +457,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
       );
       if (response.data.success) {
         if (onProfileUpdate) onProfileUpdate(response.data.user);
-        alert('Location saved successfully!');
+        toast.success('Location saved successfully!');
         setLocName('');
         setLocAddress('');
       }
@@ -475,7 +476,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
         savedLocations: [...currentLocs, mockLoc]
       };
       if (onProfileUpdate) onProfileUpdate(updatedUser);
-      alert('Location saved successfully (Local Simulation Mode)!');
+      toast.success('Location saved successfully (Local Simulation Mode)!');
       setLocName('');
       setLocAddress('');
     } finally {
@@ -496,7 +497,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
       );
       if (response.data.success) {
         if (onProfileUpdate) onProfileUpdate(response.data.user);
-        alert('Saved location removed.');
+        toast.success('Saved location removed.');
       }
     } catch (err) {
       console.warn('Database offline, deleting location locally...');
@@ -506,7 +507,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
         savedLocations: currentLocs
       };
       if (onProfileUpdate) onProfileUpdate(updatedUser);
-      alert('Location removed (Local Simulation Mode).');
+      toast.success('Location removed (Local Simulation Mode).');
     }
   };
 
@@ -526,7 +527,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
       );
       if (response.data.success) {
         if (onProfileUpdate) onProfileUpdate(response.data.user);
-        alert(`Refilled ₹${refillAmount} EV credits to your CyberPass wallet!`);
+        toast.success(`Refilled ₹${refillAmount} EV credits to your CyberPass wallet!`);
         setRefillAmount('');
       }
     } catch (err) {
@@ -552,7 +553,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
       };
       
       if (onProfileUpdate) onProfileUpdate(updatedUser);
-      alert(`Refilled ₹${refillAmount} (Local Simulation Mode)!`);
+      toast.success(`Refilled ₹${refillAmount} (Local Simulation Mode)!`);
       setRefillAmount('');
     } finally {
       setIsRefilling(false);
@@ -565,7 +566,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
   const handleBuyPlannerTokens = async () => {
     const currentBalance = user && user.walletBalance ? user.walletBalance : 1000;
     if (currentBalance < 100) {
-      alert('Insufficient wallet balance to buy premium API credits. Please refill your wallet first.');
+      toast.error('Insufficient wallet balance to buy premium API credits. Please refill your wallet first.');
       return;
     }
     
@@ -581,7 +582,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
       );
       if (response.data.success) {
         if (onProfileUpdate) onProfileUpdate(response.data.user);
-        alert('Successfully purchased 10 Premium Route Planner tokens!');
+        toast.success('Successfully purchased 10 Premium Route Planner tokens!');
       }
     } catch (err) {
       console.warn('Database offline, processing premium token purchase locally...');
@@ -605,7 +606,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
       };
       
       if (onProfileUpdate) onProfileUpdate(updatedUser);
-      alert('Successfully purchased 10 Premium tokens (Local Simulation Mode)!');
+      toast.success('Successfully purchased 10 Premium tokens (Local Simulation Mode)!');
     } finally {
       setIsBuyingTokens(false);
     }
@@ -663,15 +664,15 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
   const handleManualPaymentSubmit = async (e) => {
     e.preventDefault();
     if (!manualAmount || parseFloat(manualAmount) <= 0) {
-      alert('Please enter a valid refill amount.');
+      toast.error('Please enter a valid refill amount.');
       return;
     }
     if (!/^\d{12}$/.test(utr)) {
-      alert('UTR must be exactly 12 digits (numeric characters only).');
+      toast.success('UTR must be exactly 12 digits (numeric characters only).');
       return;
     }
     if (!screenshotUrl) {
-      alert('Please select and upload a payment receipt screenshot.');
+      toast.error('Please select and upload a payment receipt screenshot.');
       return;
     }
 
@@ -692,7 +693,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
         }
       );
       if (response.data.success) {
-        alert(response.data.message);
+        toast.error(response.data.message);
         setManualAmount('');
         setUserUpiId('');
         setUtr('');
@@ -713,7 +714,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
       // Local fallback simulation
       const currentReqs = JSON.parse(localStorage.getItem('my_payment_verifications') || '[]');
       if (currentReqs.some(r => r.utr === utr)) {
-        alert('This UTR number has already been used. Please submit a unique UTR.');
+        toast.error('This UTR number has already been used. Please submit a unique UTR.');
         setManualSaving(false);
         return;
       }
@@ -736,7 +737,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
       localStorage.setItem('my_payment_verifications', JSON.stringify(updatedReqs));
       setMyRequests(updatedReqs);
       
-      alert('Verification receipt submitted successfully (Local Simulation Mode)! Pending admin approval.');
+      toast.success('Verification receipt submitted successfully (Local Simulation Mode)! Pending admin approval.');
       setManualAmount('');
       setUserUpiId('');
       setUtr('');
@@ -791,7 +792,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
         if (onProfileUpdate) {
           onProfileUpdate(response.data.user);
         }
-        alert('Vehicle specifications updated successfully!');
+        toast.success('Vehicle specifications updated successfully!');
       }
     } catch (err) {
       console.warn('Database offline, caching vehicle changes locally...');
@@ -804,7 +805,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
         if (onProfileUpdate) {
           onProfileUpdate(updated);
         }
-        alert('Vehicle specifications updated (Simulated Local Mode)!');
+        toast.success('Vehicle specifications updated (Simulated Local Mode)!');
       }, 500);
     } finally {
       setVehicleSaving(false);
@@ -831,7 +832,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
       );
       if (response.data.success) {
         if (onProfileUpdate) onProfileUpdate(response.data.user);
-        alert('New vehicle configuration added successfully!');
+        toast.success('New vehicle configuration added successfully!');
         setNewModel('');
         setNewCapacity('');
         setNewRange('');
@@ -857,7 +858,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
         vehicles: updatedVehicles
       };
       if (onProfileUpdate) onProfileUpdate(updatedUser);
-      alert('Vehicle added to garage (Local Simulation Mode)!');
+      toast.success('Vehicle added to garage (Local Simulation Mode)!');
       setNewModel('');
       setNewCapacity('');
       setNewRange('');
@@ -880,7 +881,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
       );
       if (response.data.success) {
         if (onProfileUpdate) onProfileUpdate(response.data.user);
-        alert(`Switched active EV configuration to: ${response.data.user.vehicleModel}`);
+        toast.success(`Switched active EV configuration to: ${response.data.user.vehicleModel}`);
       }
     } catch (err) {
       console.warn('Database offline, switching active vehicle locally...');
@@ -892,7 +893,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
           batteryCapacity: targetVehicle.capacity
         };
         if (onProfileUpdate) onProfileUpdate(updatedUser);
-        alert(`Switched active EV configuration to: ${targetVehicle.model} (Local Simulation Mode)`);
+        toast.success(`Switched active EV configuration to: ${targetVehicle.model} (Local Simulation Mode)`);
       }
     }
   };
@@ -917,7 +918,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
       );
       if (response.data.success) {
         if (onProfileUpdate) onProfileUpdate(response.data.user);
-        alert('Vehicle configuration updated successfully!');
+        toast.success('Vehicle configuration updated successfully!');
         setEditingVehicleId(null);
       }
     } catch (err) {
@@ -944,7 +945,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
         } : {})
       };
       if (onProfileUpdate) onProfileUpdate(updatedUser);
-      alert('Vehicle specs updated (Local Simulation Mode)!');
+      toast.success('Vehicle specs updated (Local Simulation Mode)!');
       setEditingVehicleId(null);
     } finally {
       setVehicleSaving(false);
@@ -964,7 +965,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
       );
       if (response.data.success) {
         if (onProfileUpdate) onProfileUpdate(response.data.user);
-        alert('Vehicle removed from garage successfully.');
+        toast.success('Vehicle removed from garage successfully.');
       }
     } catch (err) {
       console.warn('Database offline, removing vehicle locally...');
@@ -990,7 +991,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
         ...extraUpdates
       };
       if (onProfileUpdate) onProfileUpdate(updatedUser);
-      alert('Vehicle removed (Local Simulation Mode).');
+      toast.success('Vehicle removed (Local Simulation Mode).');
     }
   };
   const [metrics, setMetrics] = useState({
@@ -1801,7 +1802,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
                                 type="button" 
                                 onClick={() => {
                                   navigator.clipboard.writeText(upiId);
-                                  alert('UPI ID copied to clipboard!');
+                                  toast.success('UPI ID copied to clipboard!');
                                 }}
                                 className="text-[10px] text-cyber-accent font-bold uppercase hover:underline"
                               >
@@ -2035,7 +2036,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
               
               <form onSubmit={async (e) => {
                 e.preventDefault();
-                alert('Profile updated successfully!');
+                toast.success('Profile updated successfully!');
               }} className="bg-cyber-card border border-cyber-gray-800 p-6 rounded-2xl space-y-6 max-w-md">
                 <div className="flex flex-col space-y-1.5 text-xs text-gray-400">
                   <label className="font-bold uppercase tracking-wider">Driver Full Name</label>

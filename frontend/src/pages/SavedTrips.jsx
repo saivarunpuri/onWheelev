@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Compass, ChevronRight, Zap, History, Calendar, Trash2 } from 'lucide-react';
 import axios from 'axios';
 import API from '../config';
+import toast from 'react-hot-toast';
 
 const SavedTrips = ({ setLastPlannerOutput }) => {
   const [trips, setTrips] = useState([]);
@@ -59,7 +60,7 @@ const SavedTrips = ({ setLastPlannerOutput }) => {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data.success) {
-        alert('Trip history record removed successfully!');
+        toast.success('Trip history record removed successfully!');
         fetchTrips();
       }
     } catch (err) {
@@ -69,7 +70,7 @@ const SavedTrips = ({ setLastPlannerOutput }) => {
       const saved = JSON.parse(localStorage.getItem('saved_trips') || '[]');
       const filtered = saved.filter(t => t.id !== id && t._id !== id);
       localStorage.setItem('saved_trips', JSON.stringify(filtered));
-      alert('Trip removed successfully (Simulated Local Mode).');
+      toast.success('Trip removed successfully (Simulated Local Mode).');
     }
   };
 

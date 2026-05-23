@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import API from './config';
+import { Toaster } from 'react-hot-toast';
 
 // Import Layout Component
 import Navbar from './components/Navbar';
@@ -80,6 +81,32 @@ function App() {
   return (
     <div className="min-h-screen bg-cyber-bg flex flex-col justify-between">
       <div>
+        <Toaster 
+          position="bottom-right"
+          toastOptions={{
+            style: {
+              background: '#0b0c10',
+              color: '#fff',
+              border: '1px solid #1f2937',
+              fontSize: '12px',
+              fontWeight: 'bold',
+              borderRadius: '8px',
+              fontFamily: 'monospace'
+            },
+            success: {
+              iconTheme: {
+                primary: '#00E576',
+                secondary: '#000',
+              },
+            },
+            error: {
+              iconTheme: {
+                primary: '#ef4444',
+                secondary: '#000',
+              },
+            }
+          }}
+        />
         <Navbar user={user} onLogout={handleLogout} />
         
         <Routes>
