@@ -1,0 +1,44 @@
+# =============================================
+#  OnWheel EV — Root .gitignore
+# =============================================
+
+# ── Node / NPM ─────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+package-lock.json
+
+# ── Environment / Secrets ──────────────────
+.env
+.env.*
+!.env.example        # keep the template – commit this!
+*.local
+
+# ── Vite / Build Output ────────────────────
+frontend/dist/
+frontend/.vite/
+frontend/build/
+*.map
+
+# ── OS & Editor Junk ──────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.bak
+*.tmp
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# ── Logs ──────────────────────────────────
+logs/
+*.log
+
+# ── ImageKit / Upload Cache ────────────────
+uploads/
+tmp/

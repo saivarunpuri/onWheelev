@@ -1,0 +1,347 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =============================================
+   THEME VARIABLES – Dark (default) & Light
+   ============================================= */
+:root {
+  --theme-bg:          #0B0C10;
+  --theme-surface:     #121212;
+  --theme-card:        #1E1E1E;
+  --theme-hover:       #2A2A2A;
+  --theme-border:      #2D3748;
+  --theme-border-deep: #1A202C;
+  --theme-text:        #FFFFFF;
+  --theme-muted:       #718096;
+  --theme-subtle:      #4A5568;
+  --theme-input-bg:    #0b0c10;
+  --theme-scroll-bg:   #0B0C10;
+  --theme-scroll-thumb:#1E1E1E;
+}
+
+html.light {
+  --theme-bg:          #F0F4F8;
+  --theme-surface:     #E4ECF5;
+  --theme-card:        #FFFFFF;
+  --theme-hover:       #DCE8F5;
+  --theme-border:      #B8CFEA;
+  --theme-border-deep: #C9D9EC;
+  --theme-text:        #0D1117;
+  --theme-muted:       #4B5563;
+  --theme-subtle:      #6B7280;
+  --theme-input-bg:    #F5F9FF;
+  --theme-scroll-bg:   #E4ECF5;
+  --theme-scroll-thumb:#B8CFEA;
+}
+
+/* =============================================
+   GLOBAL BASE — theme-reactive
+   ============================================= */
+@layer base {
+  body {
+    @apply font-sans antialiased overflow-x-hidden;
+    background-color: var(--theme-bg);
+    color: var(--theme-text);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
+
+/* =============================================
+   LIGHT MODE — GLOBAL ELEMENT OVERRIDES
+   ============================================= */
+html.light .bg-cyber-bg,
+html.light .bg-\[\#0B0C10\],
+html.light .bg-\[\#0b0c10\] {
+  background-color: var(--theme-bg) !important;
+}
+
+html.light .bg-cyber-surface,
+html.light .bg-\[\#121212\] {
+  background-color: var(--theme-surface) !important;
+}
+
+html.light .bg-cyber-card,
+html.light .bg-\[\#1E1E1E\],
+html.light .bg-\[\#1e1e1e\] {
+  background-color: var(--theme-card) !important;
+}
+
+html.light .bg-cyber-hover,
+html.light .bg-\[\#2A2A2A\] {
+  background-color: var(--theme-hover) !important;
+}
+
+html.light .text-white {
+  color: var(--theme-text) !important;
+}
+
+html.light .text-gray-300 {
+  color: #374151 !important;
+}
+
+html.light .text-gray-400 {
+  color: #4B5563 !important;
+}
+
+html.light .text-gray-500 {
+  color: #6B7280 !important;
+}
+
+html.light .text-gray-600 {
+  color: #9CA3AF !important;
+}
+
+html.light .border-cyber-gray-800,
+html.light .border-\[\#2D3748\] {
+  border-color: var(--theme-border) !important;
+}
+
+html.light .border-cyber-gray-900,
+html.light .border-\[\#1A202C\] {
+  border-color: var(--theme-border-deep) !important;
+}
+
+html.light .border-cyber-gray-950 {
+  border-color: #D1DFEE !important;
+}
+
+html.light nav {
+  background-color: rgba(240, 244, 248, 0.95) !important;
+  border-bottom-color: var(--theme-border) !important;
+}
+
+html.light input,
+html.light select,
+html.light textarea {
+  background-color: var(--theme-input-bg) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+html.light footer {
+  background-color: var(--theme-surface) !important;
+  border-top-color: var(--theme-border) !important;
+  color: var(--theme-muted) !important;
+}
+
+/* =============================================
+   CUSTOM SCROLLBAR
+   ============================================= */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--theme-scroll-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--theme-scroll-thumb);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00E576;
+}
+
+/* =============================================
+   BUTTON UTILITIES
+   ============================================= */
+.btn-cyber-primary {
+  @apply bg-cyber-green hover:bg-cyber-green-dark text-black font-semibold px-6 py-2.5 rounded-lg transition-all duration-300 shadow-cyber-glow hover:shadow-cyber-glow-strong transform hover:-translate-y-0.5 active:translate-y-0;
+}
+
+.btn-cyber-secondary {
+  @apply bg-transparent border border-cyber-green text-cyber-green hover:bg-cyber-green hover:text-black font-semibold px-6 py-2.5 rounded-lg transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0;
+}
+
+.cyber-card-glow {
+  background-color: var(--theme-card);
+  @apply border border-cyber-gray-800 hover:border-cyber-green/40 transition-all duration-300 rounded-xl p-5 shadow-lg hover:shadow-cyber-glow;
+}
+
+/* =============================================
+   GLOW PULSE ANIMATIONS
+   ============================================= */
+.glow-pulse-green {
+  box-shadow: 0 0 0 0 rgba(0, 229, 118, 0.7);
+  animation: pulse-green 2s infinite;
+}
+
+@keyframes pulse-green {
+  0%   { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 229, 118, 0.7); }
+  70%  { transform: scale(1);    box-shadow: 0 0 0 10px rgba(0, 229, 118, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 229, 118, 0); }
+}
+
+.glow-pulse-blue {
+  box-shadow: 0 0 0 0 rgba(29, 233, 182, 0.7);
+  animation: pulse-blue 2s infinite;
+}
+
+@keyframes pulse-blue {
+  0%   { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(29, 233, 182, 0.7); }
+  70%  { transform: scale(1);    box-shadow: 0 0 0 10px rgba(29, 233, 182, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(29, 233, 182, 0); }
+}
+
+/* =============================================
+   ROUTE LINE ANIMATION
+   ============================================= */
+.route-dash-flow {
+  stroke-dasharray: 8;
+  animation: dash-flow 20s linear infinite;
+}
+
+@keyframes dash-flow {
+  to { stroke-dashoffset: -1000; }
+}
+
+/* =============================================
+   TOKEN PAYMENT MODAL OVERLAY ANIMATIONS
+   ============================================= */
+.token-modal-overlay {
+  animation: fadeInOverlay 0.25s ease forwards;
+}
+
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.token-modal-panel {
+  animation: slideUpPanel 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes slideUpPanel {
+  from { opacity: 0; transform: translateY(30px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+.token-success-pop {
+  animation: successPop 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes successPop {
+  0%   { transform: scale(0.7); opacity: 0; }
+  60%  { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1);   opacity: 1; }
+}
+
+.token-spin-glow {
+  animation: spinGlow 2s linear infinite;
+}
+
+@keyframes spinGlow {
+  from { transform: rotate(0deg);   filter: drop-shadow(0 0 6px #00E576); }
+  to   { transform: rotate(360deg); filter: drop-shadow(0 0 12px #00E576); }
+}
+
+.progress-bar-fill {
+  animation: fillBar 1.8s ease-in-out forwards;
+}
+
+@keyframes fillBar {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+
+/* Theme toggle icon transitions */
+.theme-icon-enter {
+  animation: rotateIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes rotateIn {
+  from { opacity: 0; transform: rotate(-90deg) scale(0.6); }
+  to   { opacity: 1; transform: rotate(0deg)   scale(1); }
+}
+
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0B0C10;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1E1E1E;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00E576;
+}
+
+/* Custom cyber micro-animations & glows */
+.btn-cyber-primary {
+  @apply bg-cyber-green hover:bg-cyber-green-dark text-black font-semibold px-6 py-2.5 rounded-lg transition-all duration-300 shadow-cyber-glow hover:shadow-cyber-glow-strong transform hover:-translate-y-0.5 active:translate-y-0;
+}
+
+.btn-cyber-secondary {
+  @apply bg-transparent border border-cyber-green text-cyber-green hover:bg-cyber-green hover:text-black font-semibold px-6 py-2.5 rounded-lg transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0;
+}
+
+.cyber-card-glow {
+  @apply bg-cyber-card border border-cyber-gray-800 hover:border-cyber-green/40 transition-all duration-300 rounded-xl p-5 shadow-lg hover:shadow-cyber-glow;
+}
+
+/* Custom Glowing Dots */
+.glow-pulse-green {
+  box-shadow: 0 0 0 0 rgba(0, 229, 118, 0.7);
+  animation: pulse-green 2s infinite;
+}
+
+@keyframes pulse-green {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(0, 229, 118, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(0, 229, 118, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(0, 229, 118, 0);
+  }
+}
+
+.glow-pulse-blue {
+  box-shadow: 0 0 0 0 rgba(29, 233, 182, 0.7);
+  animation: pulse-blue 2s infinite;
+}
+
+@keyframes pulse-blue {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(29, 233, 182, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(29, 233, 182, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(29, 233, 182, 0);
+  }
+}
+
+/* Route Line dash animation */
+.route-dash-flow {
+  stroke-dasharray: 8;
+  animation: dash-flow 20s linear infinite;
+}
+
+@keyframes dash-flow {
+  to {
+    stroke-dashoffset: -1000;
+  }
+}
