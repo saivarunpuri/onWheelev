@@ -1,6 +1,7 @@
 import express from 'express';
 import ImageKit from 'imagekit';
 import PaymentVerification from '../models/PaymentVerification.js';
+import PaymentSettings from '../models/PaymentSettings.js';
 import User from '../models/User.js';
 import { protect, adminOnly } from '../middleware/auth.js';
 
@@ -153,6 +154,56 @@ router.post('/admin/resolve/:id', protect, adminOnly, async (req, res) => {
       success: true,
       message: `Transaction has been successfully resolved as: ${status.toUpperCase()}`,
       verification
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// @desc    Get global payment settings (UPI ID & QR Code Image)
+// @route   GET /api/payments/settings
+// @access  Public (or Private)
+router.get('/settings', async (req, res) => {
+  try {
+    let settings = await PaymentSettings.findOne();
+    if (!settings) {
+      // Seed initial default configurations
+      settings = await PaymentSettings.create({
+        upiId: 'charge@onwheel',
+        qrCodeUrl: 'https://ik.imagekit.io/bozyne2hl/subnova/simulated_qr_code.png'
+      });
+    }
+    res.json({ success: true, settings });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// @desc    Update global payment settings configuration
+// @route   POST /api/payments/settings
+// @access  Private/Admin
+router.post('/settings', protect, adminOnly, async (req, res) => {
+  const { upiId, qrCodeUrl } = req.body;
+
+  if (!upiId || !qrCodeUrl) {
+    return res.status(400).json({ success: false, message: 'Please provide both UPI ID and QR Code image URL.' });
+  }
+
+  try {
+    let settings = await PaymentSettings.findOne();
+    if (!settings) {
+      settings = new PaymentSettings({ upiId, qrCodeUrl, updatedBy: req.user.name });
+    } else {
+      settings.upiId = upiId;
+      settings.qrCodeUrl = qrCodeUrl;
+      settings.updatedBy = req.user.name;
+    }
+    await settings.save();
+
+    res.json({
+      success: true,
+      message: 'Global payment configuration settings successfully updated!',
+      settings
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
   ShieldAlert, Users, Zap, Truck, LayoutDashboard, BarChart3, 
   PlusCircle, Trash2, CheckCircle2, AlertOctagon, RefreshCw, Star,
-  CreditCard, Eye
+  CreditCard, Eye, Settings
 } from 'lucide-react';
 import axios from 'axios';
 import API from '../config';
@@ -47,6 +47,13 @@ const AdminDashboard = ({ user }) => {
   const [pendingPayments, setPendingPayments] = useState([]);
   const [selectedScreenshot, setSelectedScreenshot] = useState(null);
   const [adminNotesText, setAdminNotesText] = useState({});
+
+  // Global UPI & QR Payment configurations
+  const [upiId, setUpiId] = useState('charge@onwheel');
+  const [qrCodeUrl, setQrCodeUrl] = useState('https://ik.imagekit.io/bozyne2hl/subnova/simulated_qr_code.png');
+  const [settingsSaving, setSettingsSaving] = useState(false);
+  const [settingsUploadLoading, setSettingsUploadLoading] = useState(false);
+  const [settingsUploadSuccess, setSettingsUploadSuccess] = useState(false);
 
   useEffect(() => {
     // Redirect if not admin
@@ -96,12 +103,23 @@ const AdminDashboard = ({ user }) => {
       if (paymentsRes.data.success) {
         setPendingPayments(paymentsRes.data.verifications);
       }
+
+      // Global payment settings config [NEW]
+      const settingsRes = await axios.get(`${API}/api/payments/settings`);
+      if (settingsRes.data.success && settingsRes.data.settings) {
+        setUpiId(settingsRes.data.settings.upiId);
+        setQrCodeUrl(settingsRes.data.settings.qrCodeUrl);
+      }
     } catch (err) {
       console.warn('Backend server offline, loading local administrator sandbox simulations...');
       // Simulated Payment Verifications Load
-      const cached = JSON.parse(localStorage.getItem('my_payment_verifications') || '[]')
-        .filter(p => p.status === 'pending');
-      setPendingPayments(cached);
+      const cached = JSON.parse(localStorage.getItem('my_payment_verifications') || '[]');
+      const pendingCached = cached.filter(p => p.status === 'pending');
+      setPendingPayments(pendingCached);
+
+      // Load simulated payment configurations
+      setUpiId(localStorage.getItem('admin_configured_upi') || 'charge@onwheel');
+      setQrCodeUrl(localStorage.getItem('admin_configured_qr') || 'https://ik.imagekit.io/bozyne2hl/subnova/simulated_qr_code.png');
     } finally {
       setLoading(false);
     }
@@ -215,12 +233,86 @@ const AdminDashboard = ({ user }) => {
     }
   };
 
+  // Save Settings handler [NEW]
+  const handleSaveSettings = async (e) => {
+    e.preventDefault();
+    setSettingsSaving(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(`${API}/api/payments/settings`, {
+        upiId,
+        qrCodeUrl
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.data.success) {
+        setMessage('Global payment config settings updated successfully!');
+      }
+    } catch (err) {
+      console.warn('Database offline, saving config settings locally...');
+      localStorage.setItem('admin_configured_upi', upiId);
+      localStorage.setItem('admin_configured_qr', qrCodeUrl);
+      setMessage('Global payment settings saved (Local Sandbox Simulation)!');
+    } finally {
+      setSettingsSaving(false);
+    }
+  };
+
+  // ImageKit file upload handler for Qr code config [NEW]
+  const handleQrUpload = async (file) => {
+    if (!file) return;
+    setSettingsUploadLoading(true);
+    setSettingsUploadSuccess(false);
+    try {
+      const token = localStorage.getItem('token');
+      const authRes = await axios.get(`${API}/api/payments/imagekit-auth`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      if (authRes.data && authRes.data.token) {
+        const { token: ikToken, expire, signature, publicKey } = authRes.data;
+        
+        if (ikToken.startsWith('simulated_imagekit_upload_token_')) {
+          throw new Error('Simulation active');
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('fileName', 'config_qr_' + Date.now() + '_' + file.name);
+        formData.append('publicKey', publicKey || 'public_simulated_key_987654321');
+        formData.append('signature', signature);
+        formData.append('expire', expire);
+        formData.append('token', ikToken);
+
+        const uploadRes = await axios.post('https://upload.imagekit.io/api/v1/files/upload', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+
+        if (uploadRes.data && uploadRes.data.url) {
+          setQrCodeUrl(uploadRes.data.url);
+          setSettingsUploadSuccess(true);
+        }
+      }
+    } catch (err) {
+      console.warn('ImageKit offline. Utilizing local FileReader mockup...');
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setQrCodeUrl(reader.result);
+        setSettingsUploadSuccess(true);
+      };
+      reader.readAsDataURL(file);
+    } finally {
+      setSettingsUploadLoading(false);
+    }
+  };
+
   const submenus = [
     { id: 'analytics', name: 'Platform Analytics', icon: BarChart3 },
     { id: 'payments', name: 'Approve Payments', icon: CreditCard },
     { id: 'stations', name: 'Manage Stations', icon: Zap },
     { id: 'providers', name: 'Manage Providers', icon: Truck },
-    { id: 'users', name: 'Manage Users', icon: Users }
+    { id: 'users', name: 'Manage Users', icon: Users },
+    { id: 'settings', name: 'Refill Configs', icon: Settings }
   ];
 
   return (
@@ -552,7 +644,7 @@ const AdminDashboard = ({ user }) => {
             </div>
           )}
 
-          {/* TAB 4: MANAGE USERS */}
+          {/* TAB 5: MANAGE USERS */}
           {activeTab === 'users' && (
             <div className="space-y-6 animate-fade-in">
               <h3 className="font-bold text-white text-lg">User Administration</h3>
@@ -593,6 +685,113 @@ const AdminDashboard = ({ user }) => {
                     ))}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 6: GLOBAL PAYMENT SETTINGS PANEL [NEW] */}
+          {activeTab === 'settings' && (
+            <div className="space-y-6 animate-fade-in text-left">
+              <div>
+                <h3 className="font-bold text-white text-lg">CyberPass Wallet Refill Configuration</h3>
+                <p className="text-gray-400 text-xs mt-1">Configure active UPI account handles and official QR codes for manual billing collections.</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+                {/* Form controls */}
+                <form onSubmit={handleSaveSettings} className="md:col-span-5 bg-cyber-card border border-cyber-gray-800 p-6 rounded-2xl space-y-6 shadow-xl text-xs text-gray-400">
+                  <div className="flex flex-col space-y-1.5">
+                    <label className="font-bold uppercase tracking-wider text-white">Active Payment UPI ID</label>
+                    <input 
+                      type="text" 
+                      required 
+                      value={upiId}
+                      onChange={(e) => setUpiId(e.target.value)}
+                      placeholder="e.g. pay@onwheel"
+                      className="w-full bg-[#0b0c10] border border-cyber-gray-900 focus:border-cyber-accent rounded-lg py-2.5 px-3 text-white font-mono text-xs outline-none transition" 
+                    />
+                    <span className="text-[10px] text-gray-500">Drivers will scan and send custom manual wallet refills to this handle.</span>
+                  </div>
+
+                  {/* QR ImageKit direct uploader */}
+                  <div className="flex flex-col space-y-1.5">
+                    <label className="font-bold uppercase tracking-wider text-white">Refill QR Code Image</label>
+                    
+                    <div className={`border-2 border-dashed rounded-xl p-4 flex flex-col items-center justify-center relative cursor-pointer hover:bg-[#0b0c10]/40 transition ${
+                      settingsUploadSuccess 
+                        ? 'border-cyber-green' 
+                        : settingsUploadLoading 
+                          ? 'border-cyber-accent animate-pulse' 
+                          : 'border-cyber-gray-900 hover:border-cyber-accent/50'
+                    }`}>
+                      <input 
+                        type="file" 
+                        accept="image/*"
+                        onChange={(e) => handleQrUpload(e.target.files[0])}
+                        className="absolute inset-0 opacity-0 cursor-pointer w-full h-full" 
+                      />
+                      {settingsUploadLoading ? (
+                        <div className="text-center py-2">
+                          <span className="animate-spin border-2 border-cyber-accent border-t-transparent w-4 h-4 rounded-full inline-block mr-2" />
+                          <span className="text-cyber-accent text-[10px] font-mono tracking-wider">Uploading QR image...</span>
+                        </div>
+                      ) : settingsUploadSuccess ? (
+                        <div className="text-center py-2 text-cyber-green text-[10px] font-mono font-bold flex items-center space-x-1.5">
+                          <CheckCircle2 className="w-4 h-4" />
+                          <span>QR CODE SUCCESSFULLY STORED!</span>
+                        </div>
+                      ) : (
+                        <div className="text-center py-2">
+                          <p className="text-gray-300 font-semibold text-[10px] uppercase tracking-wider">Drag or select a new QR code receipt</p>
+                          <span className="text-[9px] text-gray-500 block mt-1">ImageKit direct cloud storage</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <button 
+                    type="submit" 
+                    disabled={settingsSaving || settingsUploadLoading}
+                    className={`w-full py-3 rounded-lg text-xs font-bold uppercase tracking-widest text-black transition ${
+                      (settingsSaving || settingsUploadLoading)
+                        ? 'bg-cyber-gray-800 text-gray-500 cursor-not-allowed border border-cyber-gray-950'
+                        : 'btn-cyber-primary'
+                    }`}
+                  >
+                    {settingsSaving ? 'Saving parameters...' : 'Apply Payment Configurations'}
+                  </button>
+                </form>
+
+                {/* Real-time UX Mockup Preview */}
+                <div className="md:col-span-7 bg-[#121212] border border-cyber-gray-800 rounded-2xl p-6 space-y-5 shadow-lg text-left">
+                  <div className="border-b border-cyber-gray-900 pb-3">
+                    <h4 className="font-bold text-white text-sm">Real-time Interface Preview</h4>
+                    <p className="text-gray-500 text-[10px]">This is precisely what drivers see in their wallet refill popup:</p>
+                  </div>
+
+                  <div className="max-w-xs mx-auto bg-[#0b0c10] border border-cyber-gray-900 p-4 rounded-2xl space-y-4">
+                    <div className="flex space-x-2 text-[8px] font-bold">
+                      <span className="px-2.5 py-1 rounded bg-cyber-accent/15 text-cyber-accent border border-cyber-accent/25">UPI ACCOUNT</span>
+                      <span className="px-2.5 py-1 rounded bg-cyber-gray-900 text-gray-400 border border-cyber-gray-950">QR RECEIPT</span>
+                    </div>
+
+                    <div className="p-3 bg-[#111318] border border-cyber-gray-950 rounded-xl space-y-1.5">
+                      <span className="text-[8px] text-gray-500 font-bold uppercase tracking-wider block">Official Billing UPI ID</span>
+                      <div className="flex justify-between items-center text-[10px] text-white font-mono font-bold bg-[#0c0d11] p-1.5 rounded">
+                        <span>{upiId}</span>
+                        <span className="text-[8px] text-cyber-accent cursor-pointer font-sans">Copy</span>
+                      </div>
+                    </div>
+
+                    <div className="p-3 bg-[#111318] border border-cyber-gray-950 rounded-xl flex flex-col items-center space-y-2">
+                      <span className="text-[8px] text-gray-500 font-bold uppercase tracking-wider">Dynamic QR Code</span>
+                      <div className="w-28 h-28 bg-[#0c0d11] border border-cyber-accent/20 rounded-lg p-1.5 overflow-hidden flex items-center justify-center">
+                        <img src={qrCodeUrl} alt="Active Configured QR Preview" className="w-full h-full object-contain opacity-90" />
+                      </div>
+                      <span className="text-[7px] text-gray-500 font-mono tracking-widest uppercase">ONWHEEL CORE BILLING SYSTEM</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           )}

@@ -1002,6 +1002,10 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
   const [recentTrips, setRecentTrips] = useState([]);
   const [activeTab, setActiveTab] = useState('dashboard');
 
+  // Dynamic payment settings config fetched from admin settings
+  const [upiId, setUpiId] = useState('varun2004.pvt@okaxis');
+  const [qrCodeUrl, setQrCodeUrl] = useState('');
+
   const fetchDashboardData = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -1050,11 +1054,22 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
       if (paymentsRes.data.success) {
         setMyRequests(paymentsRes.data.verifications);
       }
+
+      // Fetch global payment settings config [NEW]
+      const settingsRes = await axios.get(`${API}/api/payments/settings`);
+      if (settingsRes.data.success && settingsRes.data.settings) {
+        setUpiId(settingsRes.data.settings.upiId);
+        setQrCodeUrl(settingsRes.data.settings.qrCodeUrl);
+      }
     } catch (err) {
       console.warn('Database offline, reading local browser localstorage caches...');
       // Load simulated manual requests
       const cachedRequests = JSON.parse(localStorage.getItem('my_payment_verifications') || '[]');
       setMyRequests(cachedRequests);
+
+      // Load simulated payment configurations
+      setUpiId(localStorage.getItem('admin_configured_upi') || 'varun2004.pvt@okaxis');
+      setQrCodeUrl(localStorage.getItem('admin_configured_qr') || '');
 
       const localTrips = JSON.parse(localStorage.getItem('saved_trips') || '[]');
       if (localTrips.length > 0) {
@@ -1781,11 +1796,11 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
                           <div className="p-3 bg-[#0b0c10] border border-cyber-gray-900 rounded-xl space-y-1">
                             <span className="text-[9px] text-gray-500 uppercase tracking-wider block font-bold">Refill UPI ID</span>
                             <div className="flex justify-between items-center text-xs">
-                              <span className="text-white font-mono font-bold select-all">varun2004.pvt@okaxis</span>
+                              <span className="text-white font-mono font-bold select-all">{upiId}</span>
                               <button 
                                 type="button" 
                                 onClick={() => {
-                                  navigator.clipboard.writeText('varun2004.pvt@okaxis');
+                                  navigator.clipboard.writeText(upiId);
                                   alert('UPI ID copied to clipboard!');
                                 }}
                                 className="text-[10px] text-cyber-accent font-bold uppercase hover:underline"
@@ -1795,14 +1810,20 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
                             </div>
                           </div>
                         ) : (
-                          /* Glowing QR Code SVG Graphic */
+                          /* Dynamic Configured QR Code Image or retro vector SVG mockup backup */
                           <div className="p-3 bg-[#0b0c10] border border-cyber-gray-900 rounded-xl flex flex-col items-center space-y-2">
                             <span className="text-[9px] text-gray-500 uppercase tracking-wider font-bold">Scan Secure QR Code</span>
-                            <div className="w-32 h-32 bg-[#121212] border border-cyber-accent/30 rounded-lg p-2.5 flex items-center justify-center relative">
-                              <svg className="w-full h-full text-cyber-accent filter drop-shadow-[0_0_2px_#1de9b6]" viewBox="0 0 100 100" fill="currentColor">
-                                <path d="M5,5 h30 v30 h-30 z M15,15 h10 v10 h-10 z M65,5 h30 v30 h-30 z M75,15 h10 v10 h-10 z M5,65 h30 v30 h-30 z M15,75 h10 v10 h-10 z M45,45 h10 v10 h-10 z M45,5 h10 v10 h-10 z M5,45 h10 v10 h-10 z M65,45 h10 v10 h-10 z M45,65 h10 v10 h-10 z M65,65 h10 v10 h-10 z M75,85 h10 v10 h-10 z M85,75 h15 v10 h-15 z M85,45 h10 v10 h-10 z" />
-                              </svg>
-                            </div>
+                            {qrCodeUrl ? (
+                              <div className="w-32 h-32 bg-[#121212] border border-cyber-accent/30 rounded-lg p-1 overflow-hidden flex items-center justify-center">
+                                <img src={qrCodeUrl} alt="Active Refill QR Code" className="w-full h-full object-contain rounded" />
+                              </div>
+                            ) : (
+                              <div className="w-32 h-32 bg-[#121212] border border-cyber-accent/30 rounded-lg p-2.5 flex items-center justify-center relative">
+                                <svg className="w-full h-full text-cyber-accent filter drop-shadow-[0_0_2px_#1de9b6]" viewBox="0 0 100 100" fill="currentColor">
+                                  <path d="M5,5 h30 v30 h-30 z M15,15 h10 v10 h-10 z M65,5 h30 v30 h-30 z M75,15 h10 v10 h-10 z M5,65 h30 v30 h-30 z M15,75 h10 v10 h-10 z M45,45 h10 v10 h-10 z M45,5 h10 v10 h-10 z M5,45 h10 v10 h-10 z M65,45 h10 v10 h-10 z M45,65 h10 v10 h-10 z M65,65 h10 v10 h-10 z M75,85 h10 v10 h-10 z M85,75 h15 v10 h-15 z M85,45 h10 v10 h-10 z" />
+                                </svg>
+                              </div>
+                            )}
                             <span className="text-[8px] font-mono text-gray-500 tracking-wider">ONWHEEL CORE BILLING SYSTEM</span>
                           </div>
                         )}
