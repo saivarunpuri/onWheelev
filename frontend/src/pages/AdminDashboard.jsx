@@ -285,6 +285,7 @@ const AdminDashboard = ({ user }) => {
         formData.append('signature', signature);
         formData.append('expire', expire);
         formData.append('token', ikToken);
+        formData.append('folder', '/onwheelev');
 
         const uploadRes = await axios.post('https://upload.imagekit.io/api/v1/files/upload', formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
