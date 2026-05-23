@@ -36,8 +36,19 @@ const Login = ({ onLoginSuccess }) => {
       // MOCK LOGIN SIMULATOR
       setTimeout(() => {
         setLoading(false);
-        // Let's create an elegant local mock session matching Admin if admin credentials entered
         const isAdmin = email.toLowerCase() === 'varun2004.pvt@gmail.com' || email.toLowerCase().includes('admin');
+        
+        if (isAdmin && password !== 'admin123') {
+          setError('Invalid email or password');
+          return;
+        }
+
+        if (password.length < 8 && !isAdmin) {
+          setError('Invalid email or password');
+          return;
+        }
+
+        // Let's create an elegant local mock session matching Admin if admin credentials entered
         const mockUser = {
           _id: isAdmin ? 'admin-id-123' : 'user-id-987',
           name: isAdmin ? 'Varun EV Admin' : 'Arjun EV Driver',

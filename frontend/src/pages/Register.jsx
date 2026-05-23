@@ -28,6 +28,14 @@ const Register = ({ onRegisterSuccess }) => {
 
     const activeModel = EV_MODELS.find(m => m.name === vehicle) || EV_MODELS[0];
 
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      setError('Password must be at least 8 characters, include uppercase, lowercase, number, and special character.');
+      setLoading(false);
+      return;
+    }
+
+
     try {
       const response = await axios.post(`${API}/api/auth/register`, {
         name,
