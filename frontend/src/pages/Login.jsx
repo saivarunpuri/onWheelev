@@ -32,11 +32,13 @@ const Login = ({ onLoginSuccess }) => {
         navigate(redirect);
       }
     } catch (err) {
-      console.warn('Backend server offline, executing high-fidelity local login simulation...');
-      
-      // MOCK LOGIN SIMULATOR
-      setTimeout(() => {
-        setLoading(false);
+      setLoading(false);
+      if (err.response && err.response.data && err.response.data.message) {
+        setError(err.response.data.message);
+      } else {
+        console.warn('Backend server offline, executing high-fidelity local login simulation...');
+        
+        // MOCK LOGIN SIMULATOR
         const isAdmin = email.toLowerCase() === 'varun2004.pvt@gmail.com' || email.toLowerCase().includes('admin');
         
         if (isAdmin && password !== 'admin123') {
@@ -63,7 +65,7 @@ const Login = ({ onLoginSuccess }) => {
         onLoginSuccess(mockUser);
         const redirect = searchParams.get('redirect') || (isAdmin ? '/admin' : '/dashboard');
         navigate(redirect);
-      }, 800);
+      }
     }
   };
 

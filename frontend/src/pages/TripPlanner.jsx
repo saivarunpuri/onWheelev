@@ -14,22 +14,22 @@ const EV_MODELS = [
 
 const TripPlanner = ({ setLastPlannerOutput, user, onProfileUpdate }) => {
   const locationState = useLocation().state;
-  const [source, setSource] = useState('Hyderabad, Telangana');
-  const [destination, setDestination] = useState(locationState?.initialDestination || 'Bengaluru, Karnataka');
+  const [source, setSource] = useState('');
+  const [destination, setDestination] = useState(locationState?.initialDestination || '');
   const [vehicleModel, setVehicleModel] = useState(user ? user.vehicleModel : 'Tata Nexon EV Max');
-  const [battery, setBattery] = useState(60);
+  const [battery, setBattery] = useState(100);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   // Autocomplete Suggestions and Geocoding States
   const [sourceSuggestions, setSourceSuggestions] = useState([]);
   const [destSuggestions, setDestSuggestions] = useState([]);
-  const [sourceCoords, setSourceCoords] = useState({ lat: 17.3850, lng: 78.4867 });
-  const [destCoords, setDestCoords] = useState({ lat: 12.9716, lng: 77.5946 });
+  const [sourceCoords, setSourceCoords] = useState(null);
+  const [destCoords, setDestCoords] = useState(null);
 
   // Last selected/geocoded values to detect manual typed customization on submit
-  const [sourceLastSelected, setSourceLastSelected] = useState('Hyderabad, Telangana');
-  const [destLastSelected, setDestLastSelected] = useState('Bengaluru, Karnataka');
+  const [sourceLastSelected, setSourceLastSelected] = useState('');
+  const [destLastSelected, setDestLastSelected] = useState('');
 
   // Device Guest Credits (localStorage backed, starts with 10)
   const [guestCredits, setGuestCredits] = useState(() => {
@@ -69,7 +69,7 @@ const TripPlanner = ({ setLastPlannerOutput, user, onProfileUpdate }) => {
     };
   }, []);
 
-  // Fetch autocomplete suggestions for Source using Photon + Nominatim fallback
+  // Fetch autocomplete suggestions for Source using Ola Maps Autocomplete API
   const handleSourceChange = (val) => {
     setSource(val);
     if (sourceTimerRef.current) clearTimeout(sourceTimerRef.current);
@@ -81,46 +81,23 @@ const TripPlanner = ({ setLastPlannerOutput, user, onProfileUpdate }) => {
 
     sourceTimerRef.current = setTimeout(async () => {
       try {
-        const res = await axios.get(`https://photon.komoot.io/api/?q=${encodeURIComponent(val)}&limit=5`);
-        if (res.data && res.data.features) {
-          const suggestions = res.data.features.map(f => {
-            const name = f.properties.name || '';
-            const city = f.properties.city || f.properties.town || '';
-            const state = f.properties.state || '';
-            const country = f.properties.country || '';
-            const display_name = [name, city, state, country]
-              .filter(Boolean)
-              .filter((v, i, a) => a.indexOf(v) === i)
-              .join(', ');
-            
-            return {
-              display_name,
-              lat: f.geometry.coordinates[1],
-              lng: f.geometry.coordinates[0]
-            };
-          });
+        const OLA_MAPS_API_KEY = import.meta.env.VITE_OLA_MAPS_API_KEY || 'n7Ye8EtykeXTqU2wH2WBf7mq3SzwqK9ZProAtSD0';
+        const res = await axios.get(`https://api.olamaps.io/places/v1/autocomplete?input=${encodeURIComponent(val)}&api_key=${OLA_MAPS_API_KEY}`);
+        
+        if (res.data && res.data.predictions) {
+          const suggestions = res.data.predictions.map(item => ({
+            display_name: item.description,
+            place_id: item.place_id
+          }));
           setSourceSuggestions(suggestions);
         }
       } catch (err) {
-        console.warn('Photon autocomplete failed. Trying Nominatim...', err);
-        try {
-          const res = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(val)}&limit=5`);
-          if (res.data) {
-            const suggestions = res.data.map(item => ({
-              display_name: item.display_name,
-              lat: parseFloat(item.lat),
-              lng: parseFloat(item.lon)
-            }));
-            setSourceSuggestions(suggestions);
-          }
-        } catch (e) {
-          console.error('All suggestions options failed.', e);
-        }
+        console.warn('Ola Maps autocomplete failed for source.', err);
       }
     }, 400);
   };
 
-  // Fetch autocomplete suggestions for Destination using Photon + Nominatim fallback
+  // Fetch autocomplete suggestions for Destination using Ola Maps Autocomplete API
   const handleDestChange = (val) => {
     setDestination(val);
     if (destTimerRef.current) clearTimeout(destTimerRef.current);
@@ -132,63 +109,43 @@ const TripPlanner = ({ setLastPlannerOutput, user, onProfileUpdate }) => {
 
     destTimerRef.current = setTimeout(async () => {
       try {
-        const res = await axios.get(`https://photon.komoot.io/api/?q=${encodeURIComponent(val)}&limit=5`);
-        if (res.data && res.data.features) {
-          const suggestions = res.data.features.map(f => {
-            const name = f.properties.name || '';
-            const city = f.properties.city || f.properties.town || '';
-            const state = f.properties.state || '';
-            const country = f.properties.country || '';
-            const display_name = [name, city, state, country]
-              .filter(Boolean)
-              .filter((v, i, a) => a.indexOf(v) === i)
-              .join(', ');
-            
-            return {
-              display_name,
-              lat: f.geometry.coordinates[1],
-              lng: f.geometry.coordinates[0]
-            };
-          });
+        const OLA_MAPS_API_KEY = import.meta.env.VITE_OLA_MAPS_API_KEY || 'n7Ye8EtykeXTqU2wH2WBf7mq3SzwqK9ZProAtSD0';
+        const res = await axios.get(`https://api.olamaps.io/places/v1/autocomplete?input=${encodeURIComponent(val)}&api_key=${OLA_MAPS_API_KEY}`);
+        
+        if (res.data && res.data.predictions) {
+          const suggestions = res.data.predictions.map(item => ({
+            display_name: item.description,
+            place_id: item.place_id
+          }));
           setDestSuggestions(suggestions);
         }
       } catch (err) {
-        console.warn('Photon autocomplete failed. Trying Nominatim...', err);
-        try {
-          const res = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(val)}&limit=5`);
-          if (res.data) {
-            const suggestions = res.data.map(item => ({
-              display_name: item.display_name,
-              lat: parseFloat(item.lat),
-              lng: parseFloat(item.lon)
-            }));
-            setDestSuggestions(suggestions);
-          }
-        } catch (e) {
-          console.error('All suggestions options failed.', e);
-        }
+        console.warn('Ola Maps autocomplete failed for destination.', err);
       }
     }, 400);
   };
 
-  // Geocoding helper for single address search
+  // Geocoding helper for single address search using Ola Maps Geocoding API
   const geocodeAddress = async (query) => {
     try {
-      const res = await axios.get(`https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=1`);
-      if (res.data && res.data.features && res.data.features[0]) {
+      const OLA_MAPS_API_KEY = import.meta.env.VITE_OLA_MAPS_API_KEY || 'n7Ye8EtykeXTqU2wH2WBf7mq3SzwqK9ZProAtSD0';
+      const res = await axios.get(`https://api.olamaps.io/places/v1/geocode?address=${encodeURIComponent(query)}&api_key=${OLA_MAPS_API_KEY}`);
+      
+      const results = res.data.geocodingResults || res.data.results;
+      if (results && results.length > 0 && results[0].geometry && results[0].geometry.location) {
         return {
-          lat: res.data.features[0].geometry.coordinates[1],
-          lng: res.data.features[0].geometry.coordinates[0]
+          lat: results[0].geometry.location.lat,
+          lng: results[0].geometry.location.lng
         };
       }
-      throw new Error('No Photon results');
+      throw new Error('No Ola Maps geocoding results found');
     } catch (err) {
-      console.warn(`Photon geocoding failed for "${query}". Trying Nominatim...`);
-      const res = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`);
-      if (res.data && res.data[0]) {
+      console.error(`Ola Maps geocoding failed for "${query}":`, err);
+      const fallbackRes = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`);
+      if (fallbackRes.data && fallbackRes.data[0]) {
         return {
-          lat: parseFloat(res.data[0].lat),
-          lng: parseFloat(res.data[0].lon)
+          lat: parseFloat(fallbackRes.data[0].lat),
+          lng: parseFloat(fallbackRes.data[0].lon)
         };
       }
       throw new Error(`Unable to geocode address: ${query}`);
@@ -423,8 +380,7 @@ const TripPlanner = ({ setLastPlannerOutput, user, onProfileUpdate }) => {
                     key={idx}
                     onClick={() => {
                       setSource(item.display_name);
-                      setSourceCoords({ lat: item.lat, lng: item.lng });
-                      setSourceLastSelected(item.display_name);
+                      setSourceLastSelected('');
                       setSourceSuggestions([]);
                     }}
                     className="px-3 py-2 border-b border-cyber-gray-950 hover:bg-cyber-green/10 hover:text-cyber-green cursor-pointer transition-colors"
@@ -459,8 +415,7 @@ const TripPlanner = ({ setLastPlannerOutput, user, onProfileUpdate }) => {
                     key={idx}
                     onClick={() => {
                       setDestination(item.display_name);
-                      setDestCoords({ lat: item.lat, lng: item.lng });
-                      setDestLastSelected(item.display_name);
+                      setDestLastSelected('');
                       setDestSuggestions([]);
                     }}
                     className="px-3 py-2 border-b border-cyber-gray-950 hover:bg-cyber-green/10 hover:text-cyber-green cursor-pointer transition-colors"

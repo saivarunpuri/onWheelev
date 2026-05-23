@@ -112,7 +112,12 @@ const StationsNearby = () => {
   };
 
   useEffect(() => {
-    fetchStations();
+    if (search || chargerType) {
+      fetchStations();
+    } else {
+      setStations([]);
+      setLoading(false);
+    }
   }, [search, chargerType]);
 
   const handleStationSelect = (station) => {
@@ -157,6 +162,16 @@ const StationsNearby = () => {
               <SlidersHorizontal className="w-3.5 h-3.5 text-gray-500 absolute right-3 top-3.5 pointer-events-none" />
             </div>
           </div>
+
+          {/* Result Count Indicator */}
+          {!loading && stations.length > 0 && (
+            <div className="flex items-center space-x-2 text-xs font-semibold mb-3 px-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyber-green animate-pulse" />
+              <span className="text-gray-400">
+                Found <span className="text-cyber-green font-bold text-sm">{stations.length}</span> charging {stations.length === 1 ? 'station' : 'stations'}
+              </span>
+            </div>
+          )}
 
           {/* List items */}
           <div className="space-y-4 max-h-[500px] overflow-y-auto pr-1">
@@ -213,6 +228,7 @@ const StationsNearby = () => {
         <div className="lg:col-span-7 flex flex-col space-y-5">
           <InteractiveMap 
             mode="browse" 
+            stations={stations}
             onSelectStation={(pin) => {
               const matched = stations.find(s => s._id === pin.id || s.name === pin.name);
               if (matched) setSelectedStation(matched);

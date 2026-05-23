@@ -254,8 +254,9 @@ const TripResult = ({ tripOutput, user }) => {
           </div>
 
           <InteractiveMap 
-            mode={navStarted ? 'route' : 'browse'} 
+            mode="route"
             routeData={tripOutput} 
+            autoPlayNavigation={navStarted}
           />
         </div>
       </div>

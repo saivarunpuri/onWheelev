@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -8,33 +8,33 @@
    THEME VARIABLES – Dark (default) & Light
    ============================================= */
 :root {
-  --theme-bg:          #0B0C10;
-  --theme-surface:     #121212;
-  --theme-card:        #1E1E1E;
-  --theme-hover:       #2A2A2A;
-  --theme-border:      #2D3748;
-  --theme-border-deep: #1A202C;
-  --theme-text:        #FFFFFF;
-  --theme-muted:       #718096;
-  --theme-subtle:      #4A5568;
-  --theme-input-bg:    #0b0c10;
-  --theme-scroll-bg:   #0B0C10;
-  --theme-scroll-thumb:#1E1E1E;
+  --theme-bg: #0b0c10;
+  --theme-surface: #121212;
+  --theme-card: #1e1e1e;
+  --theme-hover: #2a2a2a;
+  --theme-border: #2d3748;
+  --theme-border-deep: #1a202c;
+  --theme-text: #ffffff;
+  --theme-muted: #718096;
+  --theme-subtle: #4a5568;
+  --theme-input-bg: #0b0c10;
+  --theme-scroll-bg: #0b0c10;
+  --theme-scroll-thumb: #1e1e1e;
 }
 
 html.light {
-  --theme-bg:          #F0F4F8;
-  --theme-surface:     #E4ECF5;
-  --theme-card:        #FFFFFF;
-  --theme-hover:       #DCE8F5;
-  --theme-border:      #B8CFEA;
-  --theme-border-deep: #C9D9EC;
-  --theme-text:        #0D1117;
-  --theme-muted:       #4B5563;
-  --theme-subtle:      #6B7280;
-  --theme-input-bg:    #F5F9FF;
-  --theme-scroll-bg:   #E4ECF5;
-  --theme-scroll-thumb:#B8CFEA;
+  --theme-bg: #f0f4f8;
+  --theme-surface: #e4ecf5;
+  --theme-card: #ffffff;
+  --theme-hover: #dce8f5;
+  --theme-border: #b8cfea;
+  --theme-border-deep: #c9d9ec;
+  --theme-text: #0d1117;
+  --theme-muted: #4b5563;
+  --theme-subtle: #6b7280;
+  --theme-input-bg: #f5f9ff;
+  --theme-scroll-bg: #e4ecf5;
+  --theme-scroll-thumb: #b8cfea;
 }
 
 /* =============================================
@@ -45,7 +45,9 @@ html.light {
     @apply font-sans antialiased overflow-x-hidden;
     background-color: var(--theme-bg);
     color: var(--theme-text);
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
   }
 }
 
@@ -83,15 +85,15 @@ html.light .text-gray-300 {
 }
 
 html.light .text-gray-400 {
-  color: #4B5563 !important;
+  color: #4b5563 !important;
 }
 
 html.light .text-gray-500 {
-  color: #6B7280 !important;
+  color: #6b7280 !important;
 }
 
 html.light .text-gray-600 {
-  color: #9CA3AF !important;
+  color: #9ca3af !important;
 }
 
 html.light .border-cyber-gray-800,
@@ -105,7 +107,7 @@ html.light .border-\[\#1A202C\] {
 }
 
 html.light .border-cyber-gray-950 {
-  border-color: #D1DFEE !important;
+  border-color: #d1dfee !important;
 }
 
 html.light nav {
@@ -145,7 +147,7 @@ html.light footer {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #00E576;
+  background: #00e576;
 }
 
 /* =============================================
@@ -173,9 +175,18 @@ html.light footer {
 }
 
 @keyframes pulse-green {
-  0%   { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 229, 118, 0.7); }
-  70%  { transform: scale(1);    box-shadow: 0 0 0 10px rgba(0, 229, 118, 0); }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 229, 118, 0); }
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(0, 229, 118, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(0, 229, 118, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(0, 229, 118, 0);
+  }
 }
 
 .glow-pulse-blue {
@@ -184,9 +195,18 @@ html.light footer {
 }
 
 @keyframes pulse-blue {
-  0%   { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(29, 233, 182, 0.7); }
-  70%  { transform: scale(1);    box-shadow: 0 0 0 10px rgba(29, 233, 182, 0); }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(29, 233, 182, 0); }
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(29, 233, 182, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(29, 233, 182, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(29, 233, 182, 0);
+  }
 }
 
 /* =============================================
@@ -198,7 +218,9 @@ html.light footer {
 }
 
 @keyframes dash-flow {
-  to { stroke-dashoffset: -1000; }
+  to {
+    stroke-dashoffset: -1000;
+  }
 }
 
 /* =============================================
@@ -209,8 +231,12 @@ html.light footer {
 }
 
 @keyframes fadeInOverlay {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .token-modal-panel {
@@ -218,8 +244,14 @@ html.light footer {
 }
 
 @keyframes slideUpPanel {
-  from { opacity: 0; transform: translateY(30px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0)    scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .token-success-pop {
@@ -227,9 +259,18 @@ html.light footer {
 }
 
 @keyframes successPop {
-  0%   { transform: scale(0.7); opacity: 0; }
-  60%  { transform: scale(1.1); opacity: 1; }
-  100% { transform: scale(1);   opacity: 1; }
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .token-spin-glow {
@@ -237,8 +278,14 @@ html.light footer {
 }
 
 @keyframes spinGlow {
-  from { transform: rotate(0deg);   filter: drop-shadow(0 0 6px #00E576); }
-  to   { transform: rotate(360deg); filter: drop-shadow(0 0 12px #00E576); }
+  from {
+    transform: rotate(0deg);
+    filter: drop-shadow(0 0 6px #00e576);
+  }
+  to {
+    transform: rotate(360deg);
+    filter: drop-shadow(0 0 12px #00e576);
+  }
 }
 
 .progress-bar-fill {
@@ -246,8 +293,12 @@ html.light footer {
 }
 
 @keyframes fillBar {
-  from { width: 0%; }
-  to   { width: 100%; }
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
 }
 
 /* Theme toggle icon transitions */
@@ -256,10 +307,15 @@ html.light footer {
 }
 
 @keyframes rotateIn {
-  from { opacity: 0; transform: rotate(-90deg) scale(0.6); }
-  to   { opacity: 1; transform: rotate(0deg)   scale(1); }
+  from {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
 }
-
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
@@ -268,16 +324,16 @@ html.light footer {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0B0C10;
+  background: #0b0c10;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1E1E1E;
+  background: #1e1e1e;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #00E576;
+  background: #00e576;
 }
 
 /* Custom cyber micro-animations & glows */
@@ -344,4 +400,9 @@ html.light footer {
   to {
     stroke-dashoffset: -1000;
   }
+}
+
+/* Ola Maps CSS Inversion */
+.dark-mode-tiles {
+  filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
 }
