@@ -199,3 +199,22 @@
   border-color: #4b5563;
   color: white;
 }
+
+/* Mobile Responsiveness for Chatbot Window */
+@media (max-width: 480px) {
+  .chatbot-window {
+    width: calc(100vw - 32px);
+    height: 400px;
+    position: fixed;
+    bottom: 84px;
+    right: 16px;
+    z-index: 1001;
+  }
+  .chatbot-fab {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+    bottom: 16px;
+    right: 16px;
+  }
+}

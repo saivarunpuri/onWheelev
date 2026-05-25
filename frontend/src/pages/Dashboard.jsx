@@ -1473,39 +1473,39 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
 
               {/* Quick summary numbers layout */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-[#121212] border border-cyber-gray-800 rounded-xl p-4.5 text-left shadow-md">
-                  <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block">
+                <div className="bg-[#121212] border border-cyber-gray-800 rounded-xl p-5 md:p-6 text-left shadow-md flex flex-col justify-between min-h-[90px] md:min-h-[110px]">
+                  <span className="text-[10px] sm:text-xs text-gray-500 font-bold uppercase tracking-wider block">
                     Total Trips
                   </span>
-                  <span className="text-2xl font-extrabold text-white mt-1.5 block">
+                  <span className="text-xl sm:text-2xl font-extrabold text-white mt-2 block">
                     {metrics.totalTrips}
                   </span>
                 </div>
 
-                <div className="bg-[#121212] border border-cyber-gray-800 rounded-xl p-4.5 text-left shadow-md">
-                  <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block">
+                <div className="bg-[#121212] border border-cyber-gray-800 rounded-xl p-5 md:p-6 text-left shadow-md flex flex-col justify-between min-h-[90px] md:min-h-[110px]">
+                  <span className="text-[10px] sm:text-xs text-gray-500 font-bold uppercase tracking-wider block">
                     Distance Covered
                   </span>
-                  <span className="text-2xl font-extrabold text-cyber-green mt-1.5 block">
+                  <span className="text-xl sm:text-2xl font-extrabold text-cyber-green mt-2 block break-all">
                     {metrics.distanceCovered.toLocaleString()} km
                   </span>
                 </div>
 
-                <div className="bg-[#121212] border border-cyber-gray-800 rounded-xl p-4.5 text-left shadow-md">
-                  <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block flex items-center">
-                    <Leaf className="w-3.5 h-3.5 text-cyber-accent mr-1" />
+                <div className="bg-[#121212] border border-cyber-gray-800 rounded-xl p-5 md:p-6 text-left shadow-md flex flex-col justify-between min-h-[90px] md:min-h-[110px]">
+                  <span className="text-[10px] sm:text-xs text-gray-500 font-bold uppercase tracking-wider block flex items-center">
+                    <Leaf className="w-3.5 h-3.5 text-cyber-accent mr-1 shrink-0" />
                     CO₂ Saved
                   </span>
-                  <span className="text-2xl font-extrabold text-cyber-accent mt-1.5 block">
+                  <span className="text-xl sm:text-2xl font-extrabold text-cyber-accent mt-2 block">
                     {metrics.carbonSaved} kg
                   </span>
                 </div>
 
-                <div className="bg-[#121212] border border-cyber-gray-800 rounded-xl p-4.5 text-left shadow-md">
-                  <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block">
+                <div className="bg-[#121212] border border-cyber-gray-800 rounded-xl p-5 md:p-6 text-left shadow-md flex flex-col justify-between min-h-[90px] md:min-h-[110px]">
+                  <span className="text-[10px] sm:text-xs text-gray-500 font-bold uppercase tracking-wider block">
                     Total Cost Saved
                   </span>
-                  <span className="text-2xl font-extrabold text-white mt-1.5 block">
+                  <span className="text-xl sm:text-2xl font-extrabold text-white mt-2 block break-all">
                     ₹{metrics.totalSpent.toLocaleString()}
                   </span>
                 </div>

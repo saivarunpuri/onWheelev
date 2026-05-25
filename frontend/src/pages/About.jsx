@@ -24,6 +24,33 @@ const About = () => {
       </div>
 
       <div className="space-y-10">
+        {/* Simple Explanation Block */}
+        <div className="bg-cyber-card border border-cyber-gray-800 rounded-2xl p-6 md:p-8 space-y-4 shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-3 bg-cyber-green/5 text-cyber-green font-mono text-[9px] uppercase border-b border-l border-cyber-gray-800 rounded-bl-lg">
+            SIMPLIFIED_GUIDE: ACTIVE
+          </div>
+
+          <h2 className="text-xl font-bold text-white">OnWheel EV In Plain English</h2>
+          <p className="text-xs sm:text-sm text-gray-400 leading-relaxed">
+            Driving an electric car is amazing, but it can be stressful when you worry about running out of battery before reaching your destination. 
+            This fear is called <strong>Range Anxiety</strong>, and it is the single biggest reason why people hesitate to buy electric cars.
+          </p>
+          <p className="text-xs sm:text-sm text-gray-400 leading-relaxed">
+            <strong>OnWheel EV is built to eliminate this fear completely.</strong> We do this in three main ways:
+          </p>
+          <ul className="list-disc pl-5 text-xs sm:text-sm text-gray-400 space-y-2">
+            <li>
+              <strong className="text-white">Smart Charger Mapping:</strong> Instead of just showing standard map dots, we tell you exactly when your car will need power and coordinate the best stations for your exact model.
+            </li>
+            <li>
+              <strong className="text-white">On-Demand Roadside Assistance:</strong> If your battery dies mid-journey, you don't need a tow truck. Use our app to summon a portable battery van directly to your GPS coordinates for a quick emergency charge.
+            </li>
+            <li>
+              <strong className="text-white">EV Analytics & Diagnostics:</strong> Review how well your battery is holding up over time, keep track of charging costs, and see the tangible impact you are making on the environment.
+            </li>
+          </ul>
+        </div>
+
         {/* Pitch block */}
         <div className="bg-cyber-card border border-cyber-gray-800 rounded-2xl p-6 md:p-8 space-y-4 shadow-xl relative overflow-hidden">
           <div className="absolute top-0 right-0 p-3 bg-cyber-green/5 text-cyber-green font-mono text-[9px] uppercase border-b border-l border-cyber-gray-800 rounded-bl-lg">

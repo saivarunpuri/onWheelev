@@ -100,6 +100,51 @@ const Home = () => {
         </div>
       </div>
 
+      {/* Understand OnWheel EV in Simple English Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full relative z-10 border-t border-cyber-gray-900">
+        <div className="bg-cyber-card border border-cyber-gray-800 rounded-3xl p-8 md:p-12 relative overflow-hidden shadow-2xl">
+          {/* Subtle background glow */}
+          <div className="absolute top-0 right-0 w-80 h-80 bg-cyber-green/5 rounded-full blur-[100px] pointer-events-none" />
+          
+          <div className="max-w-3xl text-left">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              What is <span className="text-cyber-green">OnWheel EV</span>?
+            </h2>
+            <p className="mt-4 text-gray-300 text-sm sm:text-base leading-relaxed">
+              Think of OnWheel EV as your <strong>smart co-pilot</strong> for electric vehicle (EV) trips. 
+              Driving an electric car is clean and fun, but many drivers worry about running out of battery before reaching their destination (we call this <em>"Range Anxiety"</em>). 
+              We solve this problem so you can travel peacefully.
+            </p>
+            
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-[#121212] p-5 rounded-2xl border border-cyber-gray-950 hover:border-cyber-green/30 transition duration-300">
+                <div className="text-cyber-green font-mono text-xs uppercase tracking-wider mb-2 font-bold">Step 1</div>
+                <h4 className="text-white font-bold text-base mb-2">Smart Map Route</h4>
+                <p className="text-gray-400 text-xs leading-relaxed">
+                  Enter your destination. We estimate exactly how much battery your car will have left and show you the best, fastest places to stop and charge.
+                </p>
+              </div>
+
+              <div className="bg-[#121212] p-5 rounded-2xl border border-cyber-gray-950 hover:border-cyber-green/30 transition duration-300">
+                <div className="text-cyber-green font-mono text-xs uppercase tracking-wider mb-2 font-bold">Step 2</div>
+                <h4 className="text-white font-bold text-base mb-2">Emergency Rescue</h4>
+                <p className="text-gray-400 text-xs leading-relaxed">
+                  Stranded with a dead battery? Don't panic. Press a button, and our mobile rescue vans will drive right to your GPS coordinates with a portable charger.
+                </p>
+              </div>
+
+              <div className="bg-[#121212] p-5 rounded-2xl border border-cyber-gray-950 hover:border-cyber-green/30 transition duration-300">
+                <div className="text-cyber-green font-mono text-xs uppercase tracking-wider mb-2 font-bold">Step 3</div>
+                <h4 className="text-white font-bold text-base mb-2">Track & Protect</h4>
+                <p className="text-gray-400 text-xs leading-relaxed">
+                  Keep tabs on your battery's health, review your charging bills, and see how much carbon dioxide emissions you saved by driving clean!
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Grid of Core Features */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full relative z-10 border-t border-cyber-gray-900">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

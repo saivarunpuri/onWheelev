@@ -158,7 +158,7 @@ const EmergencyProviders = () => {
                 <div
                   key={prov.id}
                   onClick={() => handleProviderSelect(prov)}
-                  className="cyber-card-glow text-left p-4.5 cursor-pointer flex justify-between items-center border border-cyber-gray-800 hover:border-red-500/30 shadow-md transition-all duration-300 group"
+                  className="cyber-card-glow text-left p-4 sm:p-5 cursor-pointer flex justify-between items-center border border-cyber-gray-800 hover:border-red-500/30 shadow-md transition-all duration-300 group"
                 >
                   <div className="space-y-2 flex-grow">
                     <div className="flex items-center space-x-2">

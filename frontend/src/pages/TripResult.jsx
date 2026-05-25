@@ -92,7 +92,7 @@ const TripResult = ({ tripOutput, user }) => {
         <span>Modify Search Settings</span>
       </button>
 
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div>
           <h1 className="text-3xl font-extrabold text-white">Your Trip Plan</h1>
           <p className="text-gray-400 text-sm mt-0.5">Optimized Route with Charging Stops</p>
@@ -100,7 +100,7 @@ const TripResult = ({ tripOutput, user }) => {
 
         {/* Save button state check */}
         {saveSuccess ? (
-          <div className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-cyber-green/10 border border-cyber-green/20 text-cyber-green text-sm font-semibold">
+          <div className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-cyber-green/10 border border-cyber-green/20 text-cyber-green text-sm font-semibold w-full sm:w-auto justify-center">
             <CheckCircle2 className="w-4 h-4" />
             <span>Trip Saved Successfully!</span>
           </div>
@@ -108,7 +108,7 @@ const TripResult = ({ tripOutput, user }) => {
           <button
             onClick={handleSaveTrip}
             disabled={saving}
-            className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-cyber-card border border-cyber-gray-800 hover:border-cyber-green text-sm font-semibold transition"
+            className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-cyber-card border border-cyber-gray-800 hover:border-cyber-green text-sm font-semibold transition w-full sm:w-auto justify-center"
           >
             <Save className="w-4 h-4 text-cyber-green" />
             <span>{saving ? 'Saving Plan...' : 'Save to History'}</span>
@@ -214,7 +214,7 @@ const TripResult = ({ tripOutput, user }) => {
           </div>
 
           {/* Bottom summaries grid */}
-          <div className="grid grid-cols-4 gap-2 text-center border-t border-cyber-gray-800 pt-5 mt-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center border-t border-cyber-gray-800 pt-5 mt-4">
             <div className="flex flex-col">
               <span className="text-[9px] text-gray-500 uppercase font-bold tracking-wider">Distance</span>
               <span className="text-sm font-extrabold text-white mt-0.5">{summary.totalDistance} km</span>
@@ -223,7 +223,7 @@ const TripResult = ({ tripOutput, user }) => {
               <span className="text-[9px] text-gray-500 uppercase font-bold tracking-wider">Total Time</span>
               <span className="text-sm font-extrabold text-white mt-0.5">{summary.duration}</span>
             </div>
-            <div className="flex flex-col border-l border-cyber-gray-800">
+            <div className="flex flex-col sm:border-l border-cyber-gray-800">
               <span className="text-[9px] text-gray-500 uppercase font-bold tracking-wider">Stops</span>
               <span className="text-sm font-extrabold text-cyber-green mt-0.5">{summary.stopsCount} Stops</span>
             </div>
