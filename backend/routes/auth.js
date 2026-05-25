@@ -109,7 +109,8 @@ router.post('/send-otp', async (req, res) => {
       console.log(`Live OTP sent via SMTP to: ${email}`);
     } catch (emailError) {
       console.error('Failed to send email:', emailError.message);
-      return res.status(500).json({ success: false, message: 'Failed to send OTP email. Please try again.' });
+      // Return the specific error message to help with debugging
+      return res.status(500).json({ success: false, message: `Failed to send OTP email: ${emailError.message}` });
     }
 
     if (intent === 'register') {

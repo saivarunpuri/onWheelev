@@ -1,6 +1,11 @@
 import nodemailer from 'nodemailer';
 
 const sendEmail = async (options) => {
+  // Validate environment variables first
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    throw new Error('Email credentials (EMAIL_USER or EMAIL_PASS) are not configured on the server');
+  }
+
   // Create a transporter
   const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST || 'smtp.gmail.com',
