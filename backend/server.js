@@ -16,6 +16,7 @@ import stationsRouter from "./routes/stations.js";
 import providersRouter from "./routes/providers.js";
 import tripsRouter from "./routes/trips.js";
 import paymentsRouter from "./routes/payments.js";
+import chatRouter from "./routes/chatRoutes.js";
 
 // Import Models for auto-seeding
 import User from "./models/User.js";
@@ -42,6 +43,7 @@ app.use("/api/stations", stationsRouter);
 app.use("/api/providers", providersRouter);
 app.use("/api/trips", tripsRouter);
 app.use("/api/payments", paymentsRouter);
+app.use("/api/chat", chatRouter);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {

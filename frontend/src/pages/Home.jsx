@@ -49,13 +49,13 @@ const Home = () => {
 
         {/* Right Hand: Elegant EV Charging Hero Vector */}
         <div className="flex-1 w-full max-w-lg lg:max-w-none flex justify-center relative">
-          <div className="relative w-full max-w-[480px] h-[340px] bg-cyber-card/40 border border-cyber-gray-800 rounded-3xl p-6 flex flex-col justify-between overflow-hidden shadow-2xl backdrop-blur-sm group hover:border-cyber-green/30 transition-all duration-500">
+          <div className="relative w-full max-w-[480px] h-[340px] bg-white/95 border border-gray-200 rounded-3xl p-6 flex flex-col justify-between overflow-hidden shadow-2xl backdrop-blur-sm group hover:border-cyber-green/30 transition-all duration-500">
             
             {/* Holographic scanner active lines */}
             <div className="absolute inset-0 bg-gradient-to-t from-transparent via-cyber-green/5 to-transparent h-1/2 w-full animate-pulse pointer-events-none" />
 
             {/* Title HUD */}
-            <div className="flex justify-between items-center text-xs text-gray-500 border-b border-cyber-gray-800 pb-3">
+            <div className="flex justify-between items-center text-xs text-gray-600 border-b border-gray-200 pb-3">
               <span className="font-mono">SYS_VEHICLE_SCAN: ONLINE</span>
               <span className="text-cyber-green font-bold animate-pulse">CHARGE_READY</span>
             </div>
@@ -67,12 +67,12 @@ const Home = () => {
               <div className="absolute w-28 h-28 border border-cyber-accent/15 rounded-full animate-pulse" />
               
               <svg className="w-48 h-32 text-cyber-green drop-shadow-[0_0_12px_rgba(0,229,118,0.25)]" viewBox="0 0 100 60" fill="none">
-                {/* EV Car silhouette */}
-                <path d="M10 38 H22 L26 30 H74 L78 38 H90 V46 H84 C84 41, 74 41, 74 46 H26 C26 41, 16 41, 16 46 H10 Z" fill="#0B0C10" stroke="#00E576" strokeWidth="1.5" />
-                {/* Wheels */}
-                <circle cx="21" cy="46" r="6" fill="#121212" stroke="#00E576" strokeWidth="1.5" />
+                {/* EV Car silhouette (Premium Light Metallic Body) */}
+                <path d="M10 38 H22 L26 30 H74 L78 38 H90 V46 H84 C84 41, 74 41, 74 46 H26 C26 41, 16 41, 16 46 H10 Z" fill="#E2E8F0" stroke="#00E576" strokeWidth="1.5" />
+                {/* Wheels (Alloy Slate Gray Design) */}
+                <circle cx="21" cy="46" r="6" fill="#475569" stroke="#00E576" strokeWidth="1.5" />
                 <circle cx="21" cy="46" r="2.5" fill="#00E576" />
-                <circle cx="79" cy="46" r="6" fill="#121212" stroke="#00E576" strokeWidth="1.5" />
+                <circle cx="79" cy="46" r="6" fill="#475569" stroke="#00E576" strokeWidth="1.5" />
                 <circle cx="79" cy="46" r="2.5" fill="#00E576" />
                 {/* Charging plug connection */}
                 <path d="M90 42 H96 V28 H93" fill="none" stroke="#1DE9B6" strokeWidth="1.5" strokeDasharray="3" />
@@ -81,12 +81,12 @@ const Home = () => {
             </div>
 
             {/* EV Stats Overlay Panel */}
-            <div className="grid grid-cols-3 gap-2 text-center border-t border-cyber-gray-800 pt-4">
+            <div className="grid grid-cols-3 gap-2 text-center border-t border-gray-200 pt-4">
               <div className="flex flex-col">
                 <span className="text-[10px] text-gray-500 uppercase tracking-wider">Range Est</span>
-                <span className="text-sm font-extrabold text-white">465 km</span>
+                <span className="text-sm font-extrabold text-black">465 km</span>
               </div>
-              <div className="flex flex-col border-x border-cyber-gray-800">
+              <div className="flex flex-col border-x border-gray-200">
                 <span className="text-[10px] text-gray-500 uppercase tracking-wider">Health</span>
                 <span className="text-sm font-extrabold text-cyber-green">98%</span>
               </div>

@@ -89,9 +89,9 @@ const InteractiveMap = ({
 
       mapInstanceRef.current = map;
 
-      // Render Dark map layers (Cyber aesthetic)
+      // Render Light map layers
       window.L.tileLayer(
-        "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+        "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
         {
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a> | Powered by Ola Maps Routing & Places APIs',
           maxZoom: 20,
@@ -122,7 +122,7 @@ const InteractiveMap = ({
   // DivIcons creator
   const createNeonIcon = (color = "#00E576", glyph = "⚡") => {
     return window.L.divIcon({
-      html: `<div class="neon-marker" style="border-color: ${color}; box-shadow: 0 0 10px ${color}; background-color: #0c0d12; color: ${color}; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-weight: bold; border-radius: 50%; font-size: 12px;">${glyph}</div>`,
+      html: `<div class="neon-marker" style="border-color: ${color}; box-shadow: 0 0 10px ${color}; background-color: #ffffff; color: ${color}; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-weight: bold; border-radius: 50%; font-size: 12px;">${glyph}</div>`,
       className: "custom-div-icon",
       iconSize: [28, 28],
       iconAnchor: [14, 14],
@@ -652,25 +652,26 @@ const InteractiveMap = ({
   };
 
   return (
-    <div className="relative w-full h-[480px] bg-[#0c0d12] rounded-xl overflow-hidden border border-cyber-gray-800 shadow-cyber-glow">
+    <div className="relative w-full h-[480px] bg-[#f8f9fa] rounded-xl overflow-hidden border border-gray-300 shadow-xl">
       <style
         dangerouslySetInnerHTML={{
           __html: `
         .leaflet-container {
-          background-color: #0c0d12 !important;
+          background-color: #f8f9fa !important;
           font-family: inherit;
         }
         .leaflet-popup-content-wrapper {
-          background-color: #121212 !important;
-          color: #ffffff !important;
-          border: 1px solid #00E576 !important;
+          background-color: #ffffff !important;
+          color: #1a202c !important;
+          border: 1px solid #e2e8f0 !important;
           border-radius: 8px !important;
           font-size: 11px !important;
           padding: 3px !important;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
         }
         .leaflet-popup-tip {
-          background-color: #121212 !important;
-          border: 1px solid #00E576 !important;
+          background-color: #ffffff !important;
+          border: 1px solid #e2e8f0 !important;
         }
         .custom-div-icon {
           background: transparent !important;
@@ -682,7 +683,7 @@ const InteractiveMap = ({
         .radar-scanner {
           position: absolute;
           inset: 0;
-          background: radial-gradient(circle, rgba(0,229,118,0.05) 0%, rgba(12,13,18,0.7) 70%);
+          background: radial-gradient(circle, rgba(0,229,118,0.05) 0%, rgba(248,249,250,0.7) 70%);
           z-index: 1000;
           display: flex;
           align-items: center;
@@ -711,13 +712,13 @@ const InteractiveMap = ({
       {radarScanning && (
         <div className="radar-scanner">
           <div className="radar-beam" />
-          <div className="absolute font-mono text-[10px] text-cyber-green font-bold uppercase tracking-widest mt-16 bg-black/80 px-2 py-1 border border-cyber-green/30 rounded">
+          <div className="absolute font-mono text-[10px] text-cyber-green font-bold uppercase tracking-widest mt-16 bg-white/90 px-2 py-1 border border-cyber-green/30 rounded shadow-md">
             Scanning emergency dispatches...
           </div>
         </div>
       )}
       {loadingRoute && (
-        <div className="absolute inset-0 bg-[#0c0d12]/80 z-[1000] flex flex-col items-center justify-center space-y-4">
+        <div className="absolute inset-0 bg-white/80 z-[1000] flex flex-col items-center justify-center space-y-4">
           <div className="animate-spin border-4 border-cyber-green border-t-transparent w-10 h-10 rounded-full" />
           <p className="text-xs text-cyber-green font-mono uppercase tracking-widest animate-pulse">
             Decoding real Ola Maps road coordinates...
@@ -725,7 +726,7 @@ const InteractiveMap = ({
         </div>
       )}
 
-      <div className="absolute bottom-4 right-4 bg-[#121212]/90 border border-cyber-gray-800 p-2 rounded-lg text-xs text-gray-400 flex items-center space-x-2 backdrop-blur-md z-[1000]">
+      <div className="absolute bottom-4 right-4 bg-white/90 border border-gray-200 p-2 rounded-lg text-xs text-gray-600 flex items-center space-x-2 backdrop-blur-md z-[1000] shadow-sm">
         <Compass
           className="w-4 h-4 text-cyber-green animate-spin"
           style={{ animationDuration: "10s" }}
@@ -738,7 +739,7 @@ const InteractiveMap = ({
       {mode === "route" &&
         !loadingRoute &&
         routePointsRef.current.length > 0 && (
-          <div className="absolute top-4 left-4 bg-[#121212]/95 border border-cyber-gray-800 p-3.5 rounded-lg flex items-center space-x-3.5 backdrop-blur-md shadow-lg z-[1000]">
+          <div className="absolute top-4 left-4 bg-white/95 border border-gray-200 p-3.5 rounded-lg flex items-center space-x-3.5 backdrop-blur-md shadow-lg z-[1000]">
             <button
               type="button"
               onClick={() => setNavPlaying(!navPlaying)}
@@ -752,7 +753,7 @@ const InteractiveMap = ({
             </button>
 
             <div className="flex flex-col text-xs pr-2">
-              <span className="font-bold text-white uppercase tracking-wider flex items-center">
+              <span className="font-bold text-gray-800 uppercase tracking-wider flex items-center">
                 <Navigation className="w-3.5 h-3.5 text-cyber-green mr-1.5 animate-pulse" />
                 {navPlaying
                   ? "Simulating Drive..."
@@ -760,7 +761,7 @@ const InteractiveMap = ({
                     ? "Trip Completed"
                     : "Navigation Paused"}
               </span>
-              <div className="w-36 h-1.5 bg-cyber-gray-800 rounded-full mt-1.5 overflow-hidden">
+              <div className="w-36 h-1.5 bg-gray-200 rounded-full mt-1.5 overflow-hidden">
                 <div
                   className="h-full bg-cyber-green transition-all"
                   style={{ width: `${carProgress}%` }}
@@ -771,21 +772,21 @@ const InteractiveMap = ({
         )}
 
       {selectedPin && (
-        <div className="absolute bottom-4 left-4 right-4 md:right-auto md:w-80 bg-[#121212]/95 border border-cyber-green/45 p-4 rounded-xl backdrop-blur-md shadow-2xl animate-fade-in z-[1000]">
+        <div className="absolute bottom-4 left-4 right-4 md:right-auto md:w-80 bg-white/95 border border-cyber-green/40 p-4 rounded-xl backdrop-blur-md shadow-2xl animate-fade-in z-[1000]">
           <div className="flex justify-between items-start mb-2">
-            <h4 className="font-bold text-white text-sm">
+            <h4 className="font-bold text-gray-900 text-sm">
               {selectedPin.name || selectedPin.providerName}
             </h4>
             <button
               type="button"
               onClick={() => setSelectedPin(null)}
-              className="text-xs text-gray-500 hover:text-white"
+              className="text-xs text-gray-500 hover:text-gray-800"
             >
               ✕
             </button>
           </div>
 
-          <div className="text-xs space-y-2 text-gray-400">
+          <div className="text-xs space-y-2 text-gray-600">
             <p className="flex items-center">
               <Zap className="w-3.5 h-3.5 text-cyber-green mr-1.5" />
               <span>
@@ -811,17 +812,17 @@ const InteractiveMap = ({
       )}
 
       {mode === "tracking" && activeProvider && (
-        <div className="absolute top-4 left-4 bg-[#121212]/95 border border-cyber-green p-4 rounded-xl backdrop-blur-md shadow-2xl flex items-center space-x-4 max-w-sm z-[1000]">
+        <div className="absolute top-4 left-4 bg-white/95 border border-cyber-green p-4 rounded-xl backdrop-blur-md shadow-2xl flex items-center space-x-4 max-w-sm z-[1000]">
           {rescueProgress < 100 ? (
             <>
               <div className="p-3 bg-cyber-green/10 rounded-full animate-pulse border border-cyber-green/20">
                 <Truck className="w-6 h-6 text-cyber-green" />
               </div>
               <div className="flex flex-col">
-                <h4 className="font-bold text-white text-sm">
+                <h4 className="font-bold text-gray-900 text-sm">
                   Rescuer is En Route
                 </h4>
-                <p className="text-xs text-gray-400 mt-0.5">
+                <p className="text-xs text-gray-600 mt-0.5">
                   Assisting Unit: {activeProvider.providerName}
                 </p>
                 <div className="flex space-x-3 text-xs text-cyber-green font-semibold mt-2">
@@ -845,7 +846,7 @@ const InteractiveMap = ({
                 <h4 className="font-bold text-cyber-green text-sm">
                   Rescue Unit Arrived!
                 </h4>
-                <p className="text-xs text-gray-400 mt-0.5">
+                <p className="text-xs text-gray-600 mt-0.5">
                   Mobile charging van has reached your location. Starting
                   emergency charge.
                 </p>

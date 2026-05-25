@@ -21,7 +21,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import AdminDashboard from './pages/AdminDashboard';
 import About from './pages/About';
-
+import Chatbot from './components/Chatbot';
 function App() {
   const [user, setUser] = useState(null);
   const [lastPlannerOutput, setLastPlannerOutput] = useState(null);
@@ -165,6 +165,8 @@ function App() {
           <span>© {new Date().getFullYear()} CORE DRIVING SECURITY SYSTEMS INC</span>
         </div>
       </footer>
+      
+      <Chatbot />
     </div>
   );
 }

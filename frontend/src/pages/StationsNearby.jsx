@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, SlidersHorizontal, Zap, Clock, Compass, Shield, PlusCircle } from 'lucide-react';
+import { Search, SlidersHorizontal, Zap, Clock, Compass, Shield, PlusCircle, Locate } from 'lucide-react';
 import axios from 'axios';
 import API from '../config';
 import InteractiveMap from '../components/InteractiveMap';
@@ -13,6 +13,8 @@ const StationsNearby = () => {
   const [chargerType, setChargerType] = useState('');
   const [loading, setLoading] = useState(true);
   const [selectedStation, setSelectedStation] = useState(null);
+  const [userLocation, setUserLocation] = useState(null);
+  const [isLocating, setIsLocating] = useState(false);
 
   const [searchSuggestions, setSearchSuggestions] = useState([]);
   const searchTimerRef = useRef(null);
@@ -25,6 +27,7 @@ const StationsNearby = () => {
 
   const handleSearchChange = (val) => {
     setSearchInput(val);
+    setUserLocation(null); // Clear geolocation when manual search is typed
     if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
 
     if (val.trim().length < 3) {
@@ -56,6 +59,10 @@ const StationsNearby = () => {
     try {
       const query = [];
       if (searchQuery) query.push(`search=${searchQuery}`);
+      if (userLocation) {
+        query.push(`lat=${userLocation.lat}`);
+        query.push(`lng=${userLocation.lng}`);
+      }
       const queryString = query.length > 0 ? `?${query.join('&')}` : '';
 
       const response = await axios.get(`${API}/api/stations${queryString}`);
@@ -149,7 +156,7 @@ const StationsNearby = () => {
   };
 
   useEffect(() => {
-    if (searchQuery) {
+    if (searchQuery || userLocation) {
       fetchStations();
     } else {
       setAllStations([]);
@@ -157,7 +164,31 @@ const StationsNearby = () => {
       setAvailablePorts([]);
       setLoading(false);
     }
-  }, [searchQuery]);
+  }, [searchQuery, userLocation]);
+
+  const handleUseLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser");
+      return;
+    }
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        });
+        setSearchInput("Current Location");
+        setSearchQuery(""); // Clear text search to prefer lat/lng
+        setIsLocating(false);
+      },
+      (error) => {
+        console.error("Error getting location:", error);
+        alert("Unable to retrieve your location. Please check your browser permissions.");
+        setIsLocating(false);
+      }
+    );
+  };
 
   useEffect(() => {
     let filtered = allStations;
@@ -223,6 +254,15 @@ const StationsNearby = () => {
                 </ul>
               )}
             </div>
+
+            <button 
+              onClick={handleUseLocation}
+              disabled={isLocating}
+              className="bg-cyber-card border border-cyber-gray-800 hover:border-cyber-green focus:border-cyber-green text-cyber-green rounded-xl px-3 flex items-center justify-center transition"
+              title="Use Current Location"
+            >
+              <Locate className={`w-4 h-4 ${isLocating ? 'animate-pulse text-white' : ''}`} />
+            </button>
             
             <div className="relative">
               <select
