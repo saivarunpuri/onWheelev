@@ -15,6 +15,12 @@ const sendEmail = async (options) => {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
+    // Force Node to resolve to IPv4 instead of IPv6. 
+    // This fixes the 'connect ENETUNREACH 2607:...' error.
+    tls: {
+      rejectUnauthorized: false
+    },
+    family: 4 
   });
 
   // Construct stylish HTML email for OnWheel EV
