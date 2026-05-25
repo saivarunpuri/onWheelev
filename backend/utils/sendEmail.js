@@ -1,33 +1,7 @@
-import nodemailer from 'nodemailer';
-import dns from 'dns';
-
-// Force Node.js to use IPv4 first for all DNS lookups.
-// This completely fixes the ENETUNREACH IPv6 error on Render and Windows.
-dns.setDefaultResultOrder('ipv4first');
-
 const sendEmail = async (options) => {
-  // Validate environment variables first
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    throw new Error('Email credentials (EMAIL_USER or EMAIL_PASS) are not configured on the server');
+  if (!process.env.BREVO_API_KEY) {
+    throw new Error('BREVO_API_KEY is not configured on the server');
   }
-
-  // Create a transporter
-  const port = parseInt(process.env.EMAIL_PORT) || 587;
-  const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-    port: port,
-    secure: port === 465, // true for 465, false for other ports
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-    // Force Node to resolve to IPv4 instead of IPv6. 
-    // This fixes the 'connect ENETUNREACH 2607:...' error.
-    tls: {
-      rejectUnauthorized: false
-    },
-    family: 4 
-  });
 
   // Construct stylish HTML email for OnWheel EV
   const htmlContent = `
@@ -53,16 +27,34 @@ const sendEmail = async (options) => {
     </div>
   `;
 
-  // Define email options
-  const mailOptions = {
-    from: `"OnWheel EV Systems" <${process.env.EMAIL_USER}>`,
-    to: options.email,
-    subject: options.subject || 'Your OnWheel EV Verification Code',
-    html: htmlContent,
-  };
+  // Send email via Brevo HTTP API
+  const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: {
+      'accept': 'application/json',
+      'api-key': process.env.BREVO_API_KEY,
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({
+      sender: {
+        name: 'OnWheel EV Systems',
+        email: process.env.EMAIL_USER || 'no-reply@onwheelev.com'
+      },
+      to: [
+        { email: options.email }
+      ],
+      subject: options.subject || 'Your OnWheel EV Verification Code',
+      htmlContent: htmlContent
+    })
+  });
 
-  // Send email
-  await transporter.sendMail(mailOptions);
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || 'Failed to send via Brevo');
+  }
+  
+  return data;
 };
 
 export default sendEmail;
