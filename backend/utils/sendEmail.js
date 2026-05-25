@@ -1,4 +1,9 @@
 import nodemailer from 'nodemailer';
+import dns from 'dns';
+
+// Force Node.js to use IPv4 first for all DNS lookups.
+// This completely fixes the ENETUNREACH IPv6 error on Render and Windows.
+dns.setDefaultResultOrder('ipv4first');
 
 const sendEmail = async (options) => {
   // Validate environment variables first
