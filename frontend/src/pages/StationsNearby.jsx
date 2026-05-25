@@ -1,30 +1,70 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Search, SlidersHorizontal, Zap, Clock, Compass, Shield, PlusCircle } from 'lucide-react';
 import axios from 'axios';
 import API from '../config';
 import InteractiveMap from '../components/InteractiveMap';
 
 const StationsNearby = () => {
+  const [allStations, setAllStations] = useState([]);
   const [stations, setStations] = useState([]);
-  const [search, setSearch] = useState('');
+  const [availablePorts, setAvailablePorts] = useState([]);
+  const [searchInput, setSearchInput] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [chargerType, setChargerType] = useState('');
   const [loading, setLoading] = useState(true);
   const [selectedStation, setSelectedStation] = useState(null);
+
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
+  const searchTimerRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+    };
+  }, []);
+
+  const handleSearchChange = (val) => {
+    setSearchInput(val);
+    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+
+    if (val.trim().length < 3) {
+      setSearchSuggestions([]);
+      if (val.trim() === '') setSearchQuery(''); // Clear search query when input is empty
+      return;
+    }
+
+    searchTimerRef.current = setTimeout(async () => {
+      try {
+        const OLA_MAPS_API_KEY = import.meta.env.VITE_OLA_MAPS_API_KEY || 'n7Ye8EtykeXTqU2wH2WBf7mq3SzwqK9ZProAtSD0';
+        const res = await axios.get(`https://api.olamaps.io/places/v1/autocomplete?input=${encodeURIComponent(val)}&api_key=${OLA_MAPS_API_KEY}`);
+        
+        if (res.data && res.data.predictions) {
+          const suggestions = res.data.predictions.map(item => ({
+            display_name: item.description,
+            place_id: item.place_id
+          }));
+          setSearchSuggestions(suggestions);
+        }
+      } catch (err) {
+        console.warn('Ola Maps autocomplete failed for search.', err);
+      }
+    }, 400);
+  };
 
   const fetchStations = async () => {
     setLoading(true);
     try {
       const query = [];
-      if (search) query.push(`search=${search}`);
-      if (chargerType) query.push(`chargerType=${chargerType}`);
+      if (searchQuery) query.push(`search=${searchQuery}`);
       const queryString = query.length > 0 ? `?${query.join('&')}` : '';
 
       const response = await axios.get(`${API}/api/stations${queryString}`);
       if (response.data.success) {
-        setStations(response.data.stations);
-        if (response.data.stations.length > 0) {
-          setSelectedStation(response.data.stations[0]);
-        }
+        const fetched = response.data.stations;
+        setAllStations(fetched);
+        
+        const ports = [...new Set(fetched.map(s => s.chargerType).filter(Boolean))];
+        setAvailablePorts(ports);
       }
     } catch (err) {
       console.warn('Backend server offline, seeding high-fidelity mock stations...');
@@ -95,30 +135,42 @@ const StationsNearby = () => {
 
       // Filtering mocks
       let filtered = mockStations;
-      if (search) {
-        filtered = filtered.filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
-      }
-      if (chargerType) {
-        filtered = filtered.filter(s => s.chargerType === chargerType);
+      if (searchQuery) {
+        filtered = filtered.filter(s => s.name.toLowerCase().includes(searchQuery.toLowerCase()));
       }
 
-      setStations(filtered);
-      if (filtered.length > 0) {
-        setSelectedStation(filtered[0]);
-      }
+      setAllStations(filtered);
+      
+      const ports = [...new Set(filtered.map(s => s.chargerType).filter(Boolean))];
+      setAvailablePorts(ports);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (search || chargerType) {
+    if (searchQuery) {
       fetchStations();
     } else {
+      setAllStations([]);
       setStations([]);
+      setAvailablePorts([]);
       setLoading(false);
     }
-  }, [search, chargerType]);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    let filtered = allStations;
+    if (chargerType) {
+      filtered = filtered.filter(s => s.chargerType === chargerType);
+    }
+    setStations(filtered);
+    if (filtered.length > 0) {
+      setSelectedStation(filtered[0]);
+    } else {
+      setSelectedStation(null);
+    }
+  }, [allStations, chargerType]);
 
   const handleStationSelect = (station) => {
     setSelectedStation(station);
@@ -140,12 +192,36 @@ const StationsNearby = () => {
             <div className="relative flex-grow">
               <input
                 type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                value={searchInput}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    setSearchQuery(searchInput);
+                    setSearchSuggestions([]);
+                  }
+                }}
                 placeholder="Search station location..."
                 className="w-full bg-cyber-card border border-cyber-gray-800 focus:border-cyber-green rounded-xl py-2.5 pl-10 pr-4 text-white text-sm outline-none transition"
               />
               <Search className="w-4 h-4 text-gray-500 absolute left-3 top-3.5" />
+              
+              {searchSuggestions.length > 0 && (
+                <ul className="absolute left-0 right-0 top-full mt-1 bg-[#121212] border border-cyber-gray-800 rounded-lg shadow-2xl z-[2000] text-xs text-left max-h-48 overflow-y-auto">
+                  {searchSuggestions.map((item, idx) => (
+                    <li
+                      key={idx}
+                      onClick={() => {
+                        setSearchInput(item.display_name);
+                        setSearchQuery(item.display_name);
+                        setSearchSuggestions([]);
+                      }}
+                      className="px-3 py-2 border-b border-cyber-gray-950 hover:bg-cyber-green/10 hover:text-cyber-green cursor-pointer transition-colors"
+                    >
+                      {item.display_name}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
             
             <div className="relative">
@@ -155,9 +231,9 @@ const StationsNearby = () => {
                 className="bg-cyber-card border border-cyber-gray-800 focus:border-cyber-green text-gray-300 rounded-xl py-2.5 pl-3 pr-8 text-xs font-semibold outline-none transition cursor-pointer appearance-none"
               >
                 <option value="">All Ports</option>
-                <option value="DC Fast Charger">DC Charger</option>
-                <option value="CCS2 Fast Charger">CCS2 Fast</option>
-                <option value="AC Type 2">AC Type 2</option>
+                {availablePorts.map((port, idx) => (
+                  <option key={idx} value={port}>{port}</option>
+                ))}
               </select>
               <SlidersHorizontal className="w-3.5 h-3.5 text-gray-500 absolute right-3 top-3.5 pointer-events-none" />
             </div>
@@ -229,6 +305,7 @@ const StationsNearby = () => {
           <InteractiveMap 
             mode="browse" 
             stations={stations}
+            selectedStation={selectedStation}
             onSelectStation={(pin) => {
               const matched = stations.find(s => s._id === pin.id || s.name === pin.name);
               if (matched) setSelectedStation(matched);

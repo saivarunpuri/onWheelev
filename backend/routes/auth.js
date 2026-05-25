@@ -15,6 +15,7 @@ const serializeUser = (user) => {
   return {
     _id: user._id,
     name: user.name,
+    username: user.username,
     email: user.email,
     vehicleModel: user.vehicleModel,
     batteryCapacity: user.batteryCapacity,
@@ -31,17 +32,18 @@ const serializeUser = (user) => {
 // @route   POST /api/auth/register
 // @access  Public
 router.post('/register', async (req, res) => {
-  const { name, email, password, vehicleModel, batteryCapacity } = req.body;
+  const { name, username, email, password, vehicleModel, batteryCapacity } = req.body;
 
   try {
-    const userExists = await User.findOne({ email });
+    const userExists = await User.findOne({ $or: [{ email }, { username }] });
 
     if (userExists) {
-      return res.status(400).json({ success: false, message: 'User already exists' });
+      return res.status(400).json({ success: false, message: 'User with this email or username already exists' });
     }
 
     const user = await User.create({
       name,
+      username,
       email,
       password,
       vehicleModel,
@@ -62,10 +64,15 @@ router.post('/register', async (req, res) => {
 // @route   POST /api/auth/login
 // @access  Public
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+  const { emailOrUsername, password } = req.body;
 
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({
+      $or: [
+        { email: emailOrUsername },
+        { username: emailOrUsername }
+      ]
+    });
 
     if (user && (await user.comparePassword(password))) {
       res.json({
