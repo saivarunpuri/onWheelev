@@ -16,10 +16,10 @@ const AdminDashboard = ({ user }) => {
   
   // Analytics State
   const [stats, setStats] = useState({
-    totalTrips: 24,
-    distanceCovered: 5420,
-    carbonSaved: 532,
-    totalSpent: 8420
+    totalTrips: 0,
+    distanceCovered: 0,
+    carbonSaved: 0,
+    totalSpent: 0
   });
 
   // Providers list

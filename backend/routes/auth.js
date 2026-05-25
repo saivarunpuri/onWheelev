@@ -1,7 +1,9 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import OtpVerification from '../models/OtpVerification.js';
 import { protect, adminOnly } from '../middleware/auth.js';
+import sendEmail from '../utils/sendEmail.js';
 
 const router = express.Router();
 
@@ -32,13 +34,27 @@ const serializeUser = (user) => {
 // @route   POST /api/auth/register
 // @access  Public
 router.post('/register', async (req, res) => {
-  const { name, username, email, password, vehicleModel, batteryCapacity } = req.body;
+  const { name, username, email, password, vehicleModel, batteryCapacity, otp } = req.body;
 
   try {
     const userExists = await User.findOne({ $or: [{ email }, { username }] });
 
     if (userExists) {
       return res.status(400).json({ success: false, message: 'User with this email or username already exists' });
+    }
+
+    // Verify OTP
+    const otpRecord = await OtpVerification.findOne({ email });
+    if (!otpRecord) {
+      return res.status(400).json({ success: false, message: 'No OTP requested for this email' });
+    }
+
+    if (otpRecord.otp !== otp) {
+      return res.status(400).json({ success: false, message: 'Invalid OTP' });
+    }
+
+    if (otpRecord.expiresAt < Date.now()) {
+      return res.status(400).json({ success: false, message: 'OTP has expired' });
     }
 
     const user = await User.create({
@@ -50,7 +66,97 @@ router.post('/register', async (req, res) => {
       batteryCapacity
     });
 
+    await OtpVerification.deleteOne({ email });
+
     res.status(201).json({
+      success: true,
+      token: generateToken(user._id),
+      user: serializeUser(user)
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// @desc    Send OTP to email
+// @route   POST /api/auth/send-otp
+// @access  Public
+router.post('/send-otp', async (req, res) => {
+  const { email, intent } = req.body; // intent: 'login' or 'register'
+
+  try {
+    const userExists = await User.findOne({ email });
+
+    if (intent === 'register' && userExists) {
+      return res.status(400).json({ success: false, message: 'User already exists' });
+    }
+
+    if (intent === 'login' && !userExists) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Generate 6 digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    // Send real-time email
+    try {
+      await sendEmail({
+        email: email,
+        subject: 'Your OnWheel EV Verification Code',
+        otp: otp
+      });
+      console.log(`Live OTP sent via SMTP to: ${email}`);
+    } catch (emailError) {
+      console.error('Failed to send email:', emailError.message);
+      return res.status(500).json({ success: false, message: 'Failed to send OTP email. Please try again.' });
+    }
+
+    if (intent === 'register') {
+      await OtpVerification.findOneAndUpdate(
+        { email },
+        { otp, expiresAt },
+        { upsert: true, new: true }
+      );
+    } else {
+      userExists.otp = otp;
+      userExists.otpExpiresAt = expiresAt;
+      await userExists.save();
+    }
+
+    res.json({ success: true, message: 'OTP sent successfully', _simulatedOtp: otp });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// @desc    Auth user with OTP & get token
+// @route   POST /api/auth/login-otp
+// @access  Public
+router.post('/login-otp', async (req, res) => {
+  const { email, otp } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    if (!user.otp || user.otp !== otp) {
+      return res.status(400).json({ success: false, message: 'Invalid OTP' });
+    }
+
+    if (user.otpExpiresAt < Date.now()) {
+      return res.status(400).json({ success: false, message: 'OTP has expired' });
+    }
+
+    // Clear OTP
+    user.otp = undefined;
+    user.otpExpiresAt = undefined;
+    await user.save();
+
+    res.json({
       success: true,
       token: generateToken(user._id),
       user: serializeUser(user)
