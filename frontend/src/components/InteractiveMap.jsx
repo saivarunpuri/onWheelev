@@ -54,6 +54,7 @@ const InteractiveMap = ({
   onSelectStation = null,
   activeProvider = null,
   stations = [],
+  selectedStation = null,
   onTrackingComplete = null,
   onTrackingProgress = null,
 }) => {
@@ -211,6 +212,23 @@ const InteractiveMap = ({
       stationMarkersGroupRef.current.addLayer(marker);
     });
   };
+
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    if (map && selectedStation && mode === "browse") {
+      // Timeout ensures flyTo overrides the default fitBounds that runs when stations array updates
+      setTimeout(() => {
+        map.flyTo([selectedStation.lat, selectedStation.lng], 18, { animate: true, duration: 1.5 });
+        setSelectedPin({
+          name: selectedStation.name,
+          type: selectedStation.type || selectedStation.chargerType || "High-Voltage Charging Port",
+          power: selectedStation.outputPower || selectedStation.power || 60,
+          status: selectedStation.status || "Available",
+          rating: selectedStation.rating || 4.8,
+        });
+      }, 50);
+    }
+  }, [selectedStation, mode]);
 
   // Setup mode adjustments
   useEffect(() => {
