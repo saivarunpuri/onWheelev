@@ -25,6 +25,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  otp: {
+    type: String
+  },
+  otpExpiresAt: {
+    type: Date
+  },
   vehicleModel: {
     type: String,
     default: 'Tata Nexon EV Max'

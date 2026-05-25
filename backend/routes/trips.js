@@ -448,14 +448,14 @@ router.get("/analytics", protect, adminOnly, async (req, res) => {
     ]);
 
     const distanceCovered =
-      totalStats.length > 0 ? totalStats[0].totalDistance : 5420; // Default mockup placeholder
+      totalStats.length > 0 ? totalStats[0].totalDistance : 0;
     const carbonSaved = (distanceCovered * 0.12).toFixed(0); // in kg
     const totalSpent = (distanceCovered * 1.55).toFixed(0); // Approximate INR costing metric
 
     res.json({
       success: true,
       metrics: {
-        totalTrips: tripsCount > 0 ? tripsCount : 24,
+        totalTrips: tripsCount,
         distanceCovered,
         carbonSaved,
         totalSpent,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
   Mail,
@@ -14,11 +14,51 @@ import API from "../config";
 import toast from "react-hot-toast";
 
 const Login = ({ onLoginSuccess }) => {
-  const [emailOrUsername, setEmailOrUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [emailOrUsername, setEmailOrUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loginMethod, setLoginMethod] = useState('password'); // 'password' or 'otp'
+  const [otpStep, setOtpStep] = useState('request'); // 'request' or 'verify'
+  const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const inputRefs = useRef([]);
+
+  const handleOtpChange = (e, index) => {
+    const value = e.target.value;
+    if (isNaN(value)) return;
+
+    const newOtp = otp.split('');
+    // Handle paste
+    if (value.length > 1) {
+      const pasted = value.slice(0, 6).split('');
+      for (let i = 0; i < pasted.length; i++) {
+        if (index + i < 6) {
+          newOtp[index + i] = pasted[i];
+        }
+      }
+      setOtp(newOtp.join(''));
+      const nextIndex = Math.min(index + pasted.length, 5);
+      if (inputRefs.current[nextIndex]) {
+        inputRefs.current[nextIndex].focus();
+      }
+      return;
+    }
+
+    newOtp[index] = value;
+    setOtp(newOtp.join(''));
+
+    // Move to next input if there is a value
+    if (value !== '' && index < 5) {
+      inputRefs.current[index + 1].focus();
+    }
+  };
+
+  const handleOtpKeyDown = (e, index) => {
+    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+      inputRefs.current[index - 1].focus();
+    }
+  };
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -26,60 +66,92 @@ const Login = ({ onLoginSuccess }) => {
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
+    setError('');
 
     try {
-      const response = await axios.post(`${API}/api/auth/login`, {
-        emailOrUsername,
-        password,
-      });
+      if (loginMethod === 'otp' && otpStep === 'request') {
+        const response = await axios.post(`${API}/api/auth/send-otp`, {
+          email: emailOrUsername,
+          intent: 'login'
+        });
+        if (response.data.success) {
+          setOtpStep('verify');
+          toast.success('OTP sent to your email! (Check console for mock)');
+          setLoading(false);
+          return;
+        }
+      } else if (loginMethod === 'otp' && otpStep === 'verify') {
+        const response = await axios.post(`${API}/api/auth/login-otp`, {
+          email: emailOrUsername,
+          otp
+        });
+        if (response.data.success) {
+          localStorage.setItem("token", response.data.token);
+          localStorage.setItem("tokenExpiry", Date.now() + 20 * 60 * 60 * 1000);
+          onLoginSuccess(response.data.user);
+          const redirect = searchParams.get("redirect") || "/dashboard";
+          navigate(redirect);
+        }
+      } else {
+        // Password login
+        const response = await axios.post(`${API}/api/auth/login`, {
+          emailOrUsername,
+          password
+        });
 
-      if (response.data.success) {
-        localStorage.setItem("token", response.data.token);
-        onLoginSuccess(response.data.user);
-        const redirect = searchParams.get("redirect") || "/dashboard";
-        navigate(redirect);
+        if (response.data.success) {
+          localStorage.setItem("token", response.data.token);
+          localStorage.setItem("tokenExpiry", Date.now() + 20 * 60 * 60 * 1000);
+          onLoginSuccess(response.data.user);
+          const redirect = searchParams.get("redirect") || "/dashboard";
+          navigate(redirect);
+        }
       }
     } catch (err) {
       setLoading(false);
       if (err.response && err.response.data && err.response.data.message) {
         setError(err.response.data.message);
       } else {
-        console.warn(
-          "Backend server offline, executing high-fidelity local login simulation...",
-        );
-
+        console.warn('Backend server offline, executing high-fidelity local login simulation...');
+        
         // MOCK LOGIN SIMULATOR
-        const isAdmin =
-          emailOrUsername.toLowerCase() === "varun2004.pvt@gmail.com" ||
-          emailOrUsername.toLowerCase().includes("admin");
-
-        if (isAdmin && password !== "admin123") {
-          setError("Invalid email or password");
-          return;
-        }
-
-        if (password.length < 8 && !isAdmin) {
-          setError("Invalid email or password");
-          return;
+        const isAdmin = emailOrUsername.toLowerCase() === 'varun2004.pvt@gmail.com' || emailOrUsername.toLowerCase().includes('admin');
+        
+        if (loginMethod === 'password') {
+          if (isAdmin && password !== 'admin123') {
+            setError('Invalid email or password');
+            return;
+          }
+          if (password.length < 8 && !isAdmin) {
+            setError('Invalid email or password');
+            return;
+          }
+        } else {
+          // Mock OTP
+          if (otpStep === 'request') {
+            setOtpStep('verify');
+            toast.success('Simulated OTP sent to your email!');
+            return;
+          }
+          if (otpStep === 'verify' && otp !== '123456') {
+            setError('Invalid OTP code. Use 123456 for testing.');
+            return;
+          }
         }
 
         // Let's create an elegant local mock session matching Admin if admin credentials entered
         const mockUser = {
-          _id: isAdmin ? "admin-id-123" : "user-id-987",
-          name: isAdmin ? "Varun EV Admin" : emailOrUsername.split("@")[0],
-          email: emailOrUsername.includes("@")
-            ? emailOrUsername
-            : `${emailOrUsername}@onwheel.ev`,
-          username: emailOrUsername.includes("@")
-            ? emailOrUsername.split("@")[0]
-            : emailOrUsername,
-          vehicleModel: "Tata Nexon EV Max",
+          _id: isAdmin ? 'admin-id-123' : 'user-id-987',
+          name: isAdmin ? 'Varun EV Admin' : emailOrUsername.split('@')[0],
+          email: emailOrUsername.includes('@') ? emailOrUsername : `${emailOrUsername}@onwheel.ev`,
+          username: emailOrUsername.includes('@') ? emailOrUsername.split('@')[0] : emailOrUsername,
+          vehicleModel: 'Tata Nexon EV Max',
           batteryCapacity: 40.5,
-          role: isAdmin ? "admin" : "user",
+          role: isAdmin ? 'admin' : 'user'
         };
-
+        
         localStorage.setItem("token", "simulated_jwt_token_key");
+        localStorage.setItem("tokenExpiry", Date.now() + 20 * 60 * 60 * 1000);
         onLoginSuccess(mockUser);
         const redirect =
           searchParams.get("redirect") || (isAdmin ? "/admin" : "/dashboard");
@@ -112,61 +184,84 @@ const Login = ({ onLoginSuccess }) => {
 
         <form onSubmit={handleLoginSubmit} className="space-y-6">
           <div className="flex flex-col space-y-2">
-            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-              Email or Username
-            </label>
+            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{loginMethod === 'otp' ? 'Email Address' : 'Email or Username'}</label>
             <div className="relative">
               <input
                 type="text"
                 required
                 value={emailOrUsername}
                 onChange={(e) => setEmailOrUsername(e.target.value)}
-                placeholder="Enter email or username"
-                className="w-full bg-[#0b0c10] border border-cyber-gray-800 focus:border-cyber-green rounded-lg py-2.5 pl-10 pr-4 text-white text-sm outline-none transition"
+                placeholder={loginMethod === 'otp' ? "Enter your email" : "Enter email or username"}
+                disabled={otpStep === 'verify'}
+                autoComplete="off"
+                className="w-full bg-[#0b0c10] border border-cyber-gray-800 focus:border-cyber-green rounded-lg py-2.5 pl-10 pr-4 text-white text-sm outline-none transition disabled:opacity-50"
               />
               <User className="w-4 h-4 text-gray-500 absolute left-3 top-3.5" />
             </div>
           </div>
 
-          <div className="flex flex-col space-y-2">
-            <div className="flex justify-between items-center">
-              <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-                Password
-              </label>
-              <a
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  toast.error("Use Correct Credentials.");
-                }}
-                className="text-[10px] text-cyber-green hover:underline"
-              >
-                Forgot?
-              </a>
+          {loginMethod === 'password' && (
+            <div className="flex flex-col space-y-2">
+              <div className="flex justify-between items-center">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Password</label>
+                <a
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    toast.error("Use Correct Credentials.");
+                  }}
+                  className="text-[10px] text-cyber-green hover:underline"
+                >
+                  Forgot?
+                </a>
+              </div>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter password"
+                  autoComplete="new-password"
+                  className="w-full bg-[#0b0c10] border border-cyber-gray-800 focus:border-cyber-green rounded-lg py-2.5 pl-10 pr-10 text-white text-sm outline-none transition"
+                />
+                <Lock className="w-4 h-4 text-gray-500 absolute left-3 top-3.5" />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-3.5 text-gray-500 hover:text-gray-300 focus:outline-none"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
             </div>
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter password"
-                className="w-full bg-[#0b0c10] border border-cyber-gray-800 focus:border-cyber-green rounded-lg py-2.5 pl-10 pr-10 text-white text-sm outline-none transition"
-              />
-              <Lock className="w-4 h-4 text-gray-500 absolute left-3 top-3.5" />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-3.5 text-gray-500 hover:text-gray-300 focus:outline-none"
-              >
-                {showPassword ? (
-                  <EyeOff className="w-4 h-4" />
-                ) : (
-                  <Eye className="w-4 h-4" />
-                )}
-              </button>{" "}
+          )}
+
+          {loginMethod === 'otp' && otpStep === 'verify' && (
+            <div className="flex flex-col space-y-2 animate-fade-in">
+              <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Verification Code</label>
+              <div className="flex justify-between space-x-2">
+                {[0, 1, 2, 3, 4, 5].map((index) => (
+                  <input
+                    key={index}
+                    ref={(el) => (inputRefs.current[index] = el)}
+                    type="text"
+                    required
+                    value={otp[index] || ''}
+                    onChange={(e) => handleOtpChange(e, index)}
+                    onKeyDown={(e) => handleOtpKeyDown(e, index)}
+                    maxLength={6}
+                    autoComplete={index === 0 ? "one-time-code" : "off"}
+                    className="w-12 h-12 bg-[#0b0c10] border border-cyber-gray-800 focus:border-cyber-green rounded-lg text-white text-lg font-bold outline-none transition text-center focus:bg-[#12141a] shadow-inner"
+                  />
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           <button
             type="submit"
@@ -178,11 +273,24 @@ const Login = ({ onLoginSuccess }) => {
             ) : (
               <>
                 <LogIn className="w-4 h-4 text-black" />
-                <span>Verify Credentials</span>
+                <span>{loginMethod === 'otp' && otpStep === 'request' ? 'Request OTP Code' : 'Verify Credentials'}</span>
               </>
             )}
           </button>
         </form>
+
+        <div className="mt-4 pt-4 border-t border-cyber-gray-900 flex justify-center">
+          <button
+            onClick={() => {
+              setLoginMethod(loginMethod === 'password' ? 'otp' : 'password');
+              setOtpStep('request');
+              setError('');
+            }}
+            className="text-xs text-cyber-green font-semibold hover:underline"
+          >
+            {loginMethod === 'password' ? 'Sign in with OTP Code instead' : 'Sign in with Password instead'}
+          </button>
+        </div>
 
         <div className="text-center mt-6 text-xs text-gray-500">
           <span>New driver? </span>

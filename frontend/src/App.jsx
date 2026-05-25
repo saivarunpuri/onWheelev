@@ -33,6 +33,17 @@ function App() {
   useEffect(() => {
     const checkToken = async () => {
       const token = localStorage.getItem('token');
+      const tokenExpiry = localStorage.getItem('tokenExpiry');
+      
+      if (token && tokenExpiry) {
+        if (Date.now() > parseInt(tokenExpiry)) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('tokenExpiry');
+          setCheckingAuth(false);
+          return;
+        }
+      }
+
       if (token) {
         try {
           const res = await axios.get(`${API}/api/auth/profile`, {
@@ -66,6 +77,7 @@ function App() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('tokenExpiry');
     setUser(null);
     navigate('/');
   };
