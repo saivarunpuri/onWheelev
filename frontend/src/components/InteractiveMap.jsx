@@ -77,15 +77,15 @@ const InteractiveMap = ({
   const [loadingRoute, setLoadingRoute] = useState(false);
   const [radarScanning, setRadarScanning] = useState(false);
 
-  // Center coordinate - Madhapur, Hyderabad
-  const defaultCenter = [17.4483, 78.3904];
+  // Center coordinate - Geographic Center of India to show all of India initially
+  const defaultCenter = [20.5937, 78.9629];
 
   // Initialize leaf map
   useEffect(() => {
     if (!mapInstanceRef.current && window.L && mapContainerRef.current) {
       const map = window.L.map(mapContainerRef.current, {
         zoomControl: false,
-      }).setView(defaultCenter, 13);
+      }).setView(defaultCenter, 5);
 
       mapInstanceRef.current = map;
 
@@ -652,38 +652,38 @@ const InteractiveMap = ({
   };
 
   return (
-    <div className="relative w-full h-[480px] bg-[#f8f9fa] rounded-xl overflow-hidden border border-gray-300 shadow-xl">
+    <div className="relative w-full h-[480px] bg-cyber-card rounded-xl overflow-hidden border border-cyber-gray-800 shadow-xl">
       <style
         dangerouslySetInnerHTML={{
           __html: `
         .leaflet-container {
-          background-color: #f8f9fa !important;
+          background-color: var(--theme-bg) !important;
           font-family: inherit;
         }
         .leaflet-popup-content-wrapper {
-          background-color: #ffffff !important;
-          color: #1a202c !important;
-          border: 1px solid #e2e8f0 !important;
+          background-color: var(--theme-card) !important;
+          color: var(--theme-text) !important;
+          border: 1px solid var(--theme-border) !important;
           border-radius: 8px !important;
           font-size: 11px !important;
           padding: 3px !important;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
         }
         .leaflet-popup-tip {
-          background-color: #ffffff !important;
-          border: 1px solid #e2e8f0 !important;
+          background-color: var(--theme-card) !important;
+          border: 1px solid var(--theme-border) !important;
         }
         .custom-div-icon {
           background: transparent !important;
           border: none !important;
         }
         .leaflet-cyber-polyline {
-          filter: drop-shadow(0 0 4px #00E576);
+          filter: drop-shadow(0 0 4px #00F5D4);
         }
         .radar-scanner {
           position: absolute;
           inset: 0;
-          background: radial-gradient(circle, rgba(0,229,118,0.05) 0%, rgba(248,249,250,0.7) 70%);
+          background: radial-gradient(circle, rgba(0,245,212,0.05) 0%, var(--theme-bg) 70%);
           z-index: 1000;
           display: flex;
           align-items: center;
@@ -693,11 +693,11 @@ const InteractiveMap = ({
         .radar-beam {
           width: 250px;
           height: 250px;
-          border: 2px solid #00E576;
+          border: 2px solid #00F5D4;
           border-radius: 50%;
           opacity: 0.5;
           animation: radar-ping 2s infinite linear;
-          box-shadow: 0 0 15px #00E576;
+          box-shadow: 0 0 15px #00F5D4;
         }
         @keyframes radar-ping {
           0% { transform: scale(0.3); opacity: 0.9; }
@@ -712,26 +712,26 @@ const InteractiveMap = ({
       {radarScanning && (
         <div className="radar-scanner">
           <div className="radar-beam" />
-          <div className="absolute font-mono text-[10px] text-cyber-green font-bold uppercase tracking-widest mt-16 bg-white/90 px-2 py-1 border border-cyber-green/30 rounded shadow-md">
+          <div className="absolute font-cyber text-[10px] text-cyber-green font-bold uppercase tracking-widest mt-16 bg-cyber-card/90 px-3 py-1.5 border border-cyber-gray-800 rounded shadow-md">
             Scanning emergency dispatches...
           </div>
         </div>
       )}
       {loadingRoute && (
-        <div className="absolute inset-0 bg-white/80 z-[1000] flex flex-col items-center justify-center space-y-4">
+        <div className="absolute inset-0 bg-cyber-bg/85 z-[1000] flex flex-col items-center justify-center space-y-4">
           <div className="animate-spin border-4 border-cyber-green border-t-transparent w-10 h-10 rounded-full" />
-          <p className="text-xs text-cyber-green font-mono uppercase tracking-widest animate-pulse">
+          <p className="text-xs text-cyber-green font-cyber uppercase tracking-widest animate-pulse">
             Decoding real Ola Maps road coordinates...
           </p>
         </div>
       )}
 
-      <div className="absolute bottom-4 right-4 bg-white/90 border border-gray-200 p-2 rounded-lg text-xs text-gray-600 flex items-center space-x-2 backdrop-blur-md z-[1000] shadow-sm">
+      <div className="absolute bottom-4 right-4 bg-cyber-card/90 border border-cyber-gray-800 p-2 rounded-lg text-xs text-cyber-text flex items-center space-x-2 backdrop-blur-md z-[1000] shadow-sm">
         <Compass
           className="w-4 h-4 text-cyber-green animate-spin"
           style={{ animationDuration: "10s" }}
         />
-        <span className="font-mono tracking-widest text-[9px] uppercase">
+        <span className="font-cyber tracking-widest text-[9px] uppercase">
           POWERED BY OLA MAPS
         </span>
       </div>
@@ -739,7 +739,7 @@ const InteractiveMap = ({
       {mode === "route" &&
         !loadingRoute &&
         routePointsRef.current.length > 0 && (
-          <div className="absolute top-4 left-4 bg-white/95 border border-gray-200 p-3.5 rounded-lg flex items-center space-x-3.5 backdrop-blur-md shadow-lg z-[1000]">
+          <div className="absolute top-4 left-4 bg-cyber-card/95 border border-cyber-gray-800 p-3.5 rounded-lg flex items-center space-x-3.5 backdrop-blur-md shadow-lg z-[1000]">
             <button
               type="button"
               onClick={() => setNavPlaying(!navPlaying)}
@@ -753,7 +753,7 @@ const InteractiveMap = ({
             </button>
 
             <div className="flex flex-col text-xs pr-2">
-              <span className="font-bold text-gray-800 uppercase tracking-wider flex items-center">
+              <span className="font-bold text-cyber-text uppercase tracking-wider flex items-center">
                 <Navigation className="w-3.5 h-3.5 text-cyber-green mr-1.5 animate-pulse" />
                 {navPlaying
                   ? "Simulating Drive..."
@@ -761,7 +761,7 @@ const InteractiveMap = ({
                     ? "Trip Completed"
                     : "Navigation Paused"}
               </span>
-              <div className="w-36 h-1.5 bg-gray-200 rounded-full mt-1.5 overflow-hidden">
+              <div className="w-36 h-1.5 bg-cyber-surface rounded-full mt-1.5 overflow-hidden">
                 <div
                   className="h-full bg-cyber-green transition-all"
                   style={{ width: `${carProgress}%` }}
@@ -772,29 +772,29 @@ const InteractiveMap = ({
         )}
 
       {selectedPin && (
-        <div className="absolute bottom-4 left-4 right-4 md:right-auto md:w-80 bg-white/95 border border-cyber-green/40 p-4 rounded-xl backdrop-blur-md shadow-2xl animate-fade-in z-[1000]">
+        <div className="absolute bottom-4 left-4 right-4 md:right-auto md:w-80 bg-cyber-card/95 border border-cyber-gray-800 p-4 rounded-xl backdrop-blur-md shadow-2xl animate-fade-in z-[1000]">
           <div className="flex justify-between items-start mb-2">
-            <h4 className="font-bold text-gray-900 text-sm">
+            <h4 className="font-bold text-cyber-text text-sm">
               {selectedPin.name || selectedPin.providerName}
             </h4>
             <button
               type="button"
               onClick={() => setSelectedPin(null)}
-              className="text-xs text-gray-500 hover:text-gray-800"
+              className="text-xs text-cyber-muted hover:text-cyber-text"
             >
               ✕
             </button>
           </div>
 
-          <div className="text-xs space-y-2 text-gray-600">
-            <p className="flex items-center">
+          <div className="text-xs space-y-2 text-cyber-muted">
+            <p className="flex items-center text-cyber-muted">
               <Zap className="w-3.5 h-3.5 text-cyber-green mr-1.5" />
               <span>
                 {selectedPin.type || "Charging Port"} •{" "}
                 {selectedPin.power || 60} kW
               </span>
             </p>
-            <p className="flex items-center">
+            <p className="flex items-center text-cyber-muted">
               <span
                 className={`w-2 h-2 rounded-full mr-2 ${selectedPin.status === "Busy" ? "bg-red-500" : "bg-cyber-green"}`}
               />
@@ -812,17 +812,17 @@ const InteractiveMap = ({
       )}
 
       {mode === "tracking" && activeProvider && (
-        <div className="absolute top-4 left-4 bg-white/95 border border-cyber-green p-4 rounded-xl backdrop-blur-md shadow-2xl flex items-center space-x-4 max-w-sm z-[1000]">
+        <div className="absolute top-4 left-4 bg-cyber-card/95 border border-cyber-gray-800 p-4 rounded-xl backdrop-blur-md shadow-2xl flex items-center space-x-4 max-w-sm z-[1000]">
           {rescueProgress < 100 ? (
             <>
               <div className="p-3 bg-cyber-green/10 rounded-full animate-pulse border border-cyber-green/20">
                 <Truck className="w-6 h-6 text-cyber-green" />
               </div>
               <div className="flex flex-col">
-                <h4 className="font-bold text-gray-900 text-sm">
+                <h4 className="font-bold text-cyber-text text-sm">
                   Rescuer is En Route
                 </h4>
-                <p className="text-xs text-gray-600 mt-0.5">
+                <p className="text-xs text-cyber-muted mt-0.5">
                   Assisting Unit: {activeProvider.providerName}
                 </p>
                 <div className="flex space-x-3 text-xs text-cyber-green font-semibold mt-2">
@@ -846,7 +846,7 @@ const InteractiveMap = ({
                 <h4 className="font-bold text-cyber-green text-sm">
                   Rescue Unit Arrived!
                 </h4>
-                <p className="text-xs text-gray-600 mt-0.5">
+                <p className="text-xs text-cyber-muted mt-0.5">
                   Mobile charging van has reached your location. Starting
                   emergency charge.
                 </p>

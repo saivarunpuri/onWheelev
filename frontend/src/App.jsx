@@ -121,41 +121,43 @@ function App() {
         />
         <Navbar user={user} onLogout={handleLogout} />
         
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/planner" element={<TripPlanner setLastPlannerOutput={setLastPlannerOutput} user={user} onProfileUpdate={handleLoginSuccess} />} />
-          <Route path="/trip-result" element={<TripResult tripOutput={lastPlannerOutput} user={user} />} />
-          <Route path="/stations" element={<StationsNearby />} />
-          <Route path="/emergency" element={<EmergencyProviders />} />
-          <Route path="/provider-details" element={<ProviderDetails />} />
-          <Route path="/live-tracking" element={<LiveTracking />} />
-          <Route path="/about" element={<About />} />
-          
-          <Route 
-            path="/login" 
-            element={user ? <Navigate to="/dashboard" /> : <Login onLoginSuccess={handleLoginSuccess} />} 
-          />
-          <Route 
-            path="/register" 
-            element={user ? <Navigate to="/dashboard" /> : <Register onRegisterSuccess={handleLoginSuccess} />} 
-          />
+        <div className="pt-24 pb-12 transition-all duration-300">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/planner" element={<TripPlanner setLastPlannerOutput={setLastPlannerOutput} user={user} onProfileUpdate={handleLoginSuccess} />} />
+            <Route path="/trip-result" element={<TripResult tripOutput={lastPlannerOutput} user={user} />} />
+            <Route path="/stations" element={<StationsNearby />} />
+            <Route path="/emergency" element={<EmergencyProviders />} />
+            <Route path="/provider-details" element={<ProviderDetails />} />
+            <Route path="/live-tracking" element={<LiveTracking />} />
+            <Route path="/about" element={<About />} />
+            
+            <Route 
+              path="/login" 
+              element={user ? <Navigate to="/dashboard" /> : <Login onLoginSuccess={handleLoginSuccess} />} 
+            />
+            <Route 
+              path="/register" 
+              element={user ? <Navigate to="/dashboard" /> : <Register onRegisterSuccess={handleLoginSuccess} />} 
+            />
 
-          {/* Protected routes */}
-          <Route 
-            path="/dashboard" 
-            element={user ? <Dashboard user={user} onLogout={handleLogout} onProfileUpdate={handleLoginSuccess} /> : <Navigate to="/login" />} 
-          />
-          <Route 
-            path="/saved-trips" 
-            element={user ? <SavedTrips setLastPlannerOutput={setLastPlannerOutput} /> : <Navigate to="/login" />} 
-          />
-          <Route 
-            path="/admin" 
-            element={user && user.role === 'admin' ? <AdminDashboard user={user} /> : <Navigate to="/login" />} 
-          />
+            {/* Protected routes */}
+            <Route 
+              path="/dashboard" 
+              element={user ? <Dashboard user={user} onLogout={handleLogout} onProfileUpdate={handleLoginSuccess} /> : <Navigate to="/login" />} 
+            />
+            <Route 
+              path="/saved-trips" 
+              element={user ? <SavedTrips setLastPlannerOutput={setLastPlannerOutput} /> : <Navigate to="/login" />} 
+            />
+            <Route 
+              path="/admin" 
+              element={user && user.role === 'admin' ? <AdminDashboard user={user} /> : <Navigate to="/login" />} 
+            />
 
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </div>
       </div>
 
       {/* Futuristic sleek dark footer */}
