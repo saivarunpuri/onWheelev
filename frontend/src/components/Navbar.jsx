@@ -93,19 +93,23 @@ const Navbar = ({ user, onLogout }) => {
     <>
       {/* ── CENTRALIZED DYNAMIC ISLAND CAPSULE NAVIGATION ── */}
       <nav
-        onMouseEnter={() => setIsHovered(true)}
+        onMouseEnter={() => {
+          if (window.innerWidth >= 768) {
+            setIsHovered(true);
+          }
+        }}
         onMouseLeave={() => {
           setIsHovered(false);
           setShowDropdown(false);
         }}
         className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-slate-50/95 dark:bg-[#001616]/95 border border-slate-200/80 dark:border-cyber-gray-800/80 backdrop-blur-md shadow-[0_8px_32px_0_rgba(0,0,0,0.08)] dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] transition-all duration-500 ease-in-out
           ${isMobileOpen 
-            ? 'flex flex-col justify-start w-[300px] h-[390px] rounded-3xl p-4 overflow-hidden' 
-            : 'flex flex-row items-center justify-between h-14 rounded-full px-5'
+            ? 'flex flex-col justify-start w-[90%] max-w-[340px] h-[390px] rounded-3xl p-5 overflow-hidden' 
+            : 'flex flex-row items-center justify-between h-14 rounded-full px-5 w-[290px] md:w-64'
           }
           ${isHovered && !isMobileOpen
             ? 'md:w-[960px] md:px-5' 
-            : 'md:w-64'
+            : ''
           }
         `}
       >
