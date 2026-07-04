@@ -198,9 +198,9 @@ const Login = ({ onLoginSuccess }) => {
           </p>
 
           {/* Interactive animated SVG battery telemetry */}
-          <div className="mt-10 relative w-full max-w-[420px] h-[190px] bg-cyber-surface/60 border border-cyber-gray-800 rounded-2xl p-5 flex flex-col justify-between overflow-hidden shadow-inner backdrop-blur-sm">
+          <div className="mt-10 relative w-full max-w-[420px] h-[190px] bg-slate-100/50 dark:bg-cyber-surface/60 border border-slate-200 dark:border-cyber-gray-800 rounded-2xl p-5 flex flex-col justify-between overflow-hidden shadow-inner backdrop-blur-sm">
             <div className="absolute inset-0 bg-gradient-to-t from-transparent via-cyber-green/5 to-transparent h-1/3 w-full animate-pulse pointer-events-none" />
-            <div className="flex justify-between items-center text-[10px] text-cyber-muted font-cyber border-b border-cyber-gray-800 pb-2.5">
+            <div className="flex justify-between items-center text-[10px] text-cyber-muted font-cyber border-b border-slate-200 dark:border-cyber-gray-800 pb-2.5">
               <span>SECURITY_CORE: STATUS_READY</span>
               <span className="text-cyber-green font-bold animate-ping">●</span>
             </div>
@@ -241,16 +241,16 @@ const Login = ({ onLoginSuccess }) => {
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-2 text-center text-[9px] border-t border-cyber-gray-800 pt-2 font-cyber text-cyber-muted">
+            <div className="grid grid-cols-3 gap-2 text-center text-[9px] border-t border-slate-200 dark:border-cyber-gray-800 pt-2 font-cyber text-cyber-muted">
               <span>LATENCY: 12ms</span>
-              <span className="border-x border-cyber-gray-800">NODES: 42</span>
+              <span className="border-x border-slate-200 dark:border-cyber-gray-800">NODES: 42</span>
               <span>CIPHER: AES-256</span>
             </div>
           </div>
         </div>
 
         {/* Right Hand: Elegant glassmorphic login form card */}
-        <div className="w-full max-w-md bg-cyber-card/85 border border-cyber-gray-800 rounded-3xl p-8 shadow-2xl relative z-10 text-left backdrop-blur-md hover:border-cyber-green/20 transition-all duration-500">
+        <div className="w-full max-w-md bg-white/85 dark:bg-cyber-card/85 border border-slate-200 dark:border-cyber-gray-800 rounded-3xl p-8 shadow-2xl relative z-10 text-left backdrop-blur-md hover:border-cyber-green/20 transition-all duration-500">
           <div className="text-center mb-8">
             <h2 className="text-2xl font-extrabold text-white font-display">
               Sign In to OnWheel EV
@@ -285,7 +285,7 @@ const Login = ({ onLoginSuccess }) => {
                   }
                   disabled={otpStep === "verify"}
                   autoComplete="off"
-                  className="w-full bg-cyber-surface/60 border border-cyber-gray-800 focus:border-cyber-green rounded-xl py-2.5 pl-10 pr-4 text-white text-sm outline-none transition disabled:opacity-50"
+                  className="w-full bg-slate-50 dark:bg-cyber-surface/60 border border-slate-200 dark:border-cyber-gray-800 focus:border-cyber-green rounded-xl py-2.5 pl-10 pr-4 text-slate-800 dark:text-white text-sm outline-none transition disabled:opacity-50 placeholder:text-slate-400 dark:placeholder:text-gray-600"
                 />
                 <User className="w-4 h-4 text-cyber-muted absolute left-3 top-3.5" />
               </div>
@@ -316,7 +316,7 @@ const Login = ({ onLoginSuccess }) => {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter password (e.g. admin123)"
                     autoComplete="new-password"
-                    className="w-full bg-cyber-surface/60 border border-cyber-gray-800 focus:border-cyber-green rounded-xl py-2.5 pl-10 pr-10 text-white text-sm outline-none transition"
+                    className="w-full bg-slate-50 dark:bg-cyber-surface/60 border border-slate-200 dark:border-cyber-gray-800 focus:border-cyber-green rounded-xl py-2.5 pl-10 pr-10 text-slate-800 dark:text-white text-sm outline-none transition placeholder:text-slate-400 dark:placeholder:text-gray-600"
                   />
                   <Lock className="w-4 h-4 text-cyber-muted absolute left-3 top-3.5" />
                   <button
@@ -351,7 +351,7 @@ const Login = ({ onLoginSuccess }) => {
                       onKeyDown={(e) => handleOtpKeyDown(e, index)}
                       maxLength={6}
                       autoComplete={index === 0 ? "one-time-code" : "off"}
-                      className="w-12 h-12 bg-cyber-surface border border-cyber-gray-800 focus:border-cyber-green rounded-xl text-cyber-text text-lg font-bold outline-none transition text-center focus:bg-cyber-surface/80 shadow-inner font-cyber"
+                      className="w-12 h-12 bg-slate-50 dark:bg-cyber-surface border border-slate-200 dark:border-cyber-gray-800 focus:border-cyber-green rounded-xl text-slate-850 dark:text-cyber-text text-lg font-bold outline-none transition text-center focus:bg-slate-100 dark:focus:bg-cyber-surface/80 shadow-inner font-cyber"
                     />
                   ))}
                 </div>

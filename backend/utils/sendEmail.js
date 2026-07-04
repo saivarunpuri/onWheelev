@@ -1,10 +1,12 @@
+import User from '../models/User.js';
+
 const sendEmail = async (options) => {
   if (!process.env.BREVO_API_KEY) {
     throw new Error('BREVO_API_KEY is not configured on the server');
   }
 
   // Construct stylish HTML email for OnWheel EV
-  const htmlContent = `
+  const htmlContent = options.htmlContent || `
     <div style="font-family: 'Inter', sans-serif; max-width: 500px; margin: 0 auto; background-color: #0b0c10; padding: 40px; border-radius: 16px; border: 1px solid #1f2937; color: #ffffff;">
       <div style="text-align: center; margin-bottom: 30px;">
         <h1 style="color: #4ade80; margin: 0; font-size: 28px; letter-spacing: -0.5px;">OnWheel <span style="color: #ffffff;">EV</span></h1>
@@ -55,6 +57,30 @@ const sendEmail = async (options) => {
   }
   
   return data;
+};
+
+export const notifyAdmins = async (subject, htmlContent) => {
+  try {
+    const admins = await User.find({ role: 'admin' });
+    if (admins.length === 0) {
+      console.log('No admins found in database to notify.');
+      return;
+    }
+    for (const admin of admins) {
+      try {
+        await sendEmail({
+          email: admin.email,
+          subject: subject,
+          htmlContent: htmlContent
+        });
+        console.log(`Admin notification sent to: ${admin.email}`);
+      } catch (err) {
+        console.error(`Failed to send notification to admin ${admin.email}:`, err.message);
+      }
+    }
+  } catch (err) {
+    console.error('Error fetching admins for notification:', err.message);
+  }
 };
 
 export default sendEmail;

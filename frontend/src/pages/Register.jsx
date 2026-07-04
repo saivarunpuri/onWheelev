@@ -217,9 +217,9 @@ const Register = ({ onRegisterSuccess }) => {
           </p>
 
           {/* Interactive animated SVG battery telemetry */}
-          <div className="mt-10 relative w-full max-w-[420px] h-[190px] bg-cyber-surface/60 border border-cyber-gray-800 rounded-2xl p-5 flex flex-col justify-between overflow-hidden shadow-inner backdrop-blur-sm">
+          <div className="mt-10 relative w-full max-w-[420px] h-[190px] bg-slate-100/50 dark:bg-cyber-surface/60 border border-slate-200 dark:border-cyber-gray-800 rounded-2xl p-5 flex flex-col justify-between overflow-hidden shadow-inner backdrop-blur-sm">
             <div className="absolute inset-0 bg-gradient-to-t from-transparent via-cyber-green/5 to-transparent h-1/3 w-full animate-pulse pointer-events-none" />
-            <div className="flex justify-between items-center text-[10px] text-cyber-muted font-cyber border-b border-cyber-gray-800 pb-2.5">
+            <div className="flex justify-between items-center text-[10px] text-cyber-muted font-cyber border-b border-slate-200 dark:border-cyber-gray-800 pb-2.5">
               <span>SYS_METRIC_SCAN: CONFIGURE_NEW</span>
               <span className="text-cyber-green font-bold animate-ping">●</span>
             </div>
@@ -260,16 +260,16 @@ const Register = ({ onRegisterSuccess }) => {
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-2 text-center text-[9px] border-t border-cyber-gray-800 pt-2 font-cyber text-cyber-muted">
+            <div className="grid grid-cols-3 gap-2 text-center text-[9px] border-t border-slate-200 dark:border-cyber-gray-800 pt-2 font-cyber text-cyber-muted">
               <span>ACTIVE: 100%</span>
-              <span className="border-x border-cyber-gray-800">NODES: OLA</span>
+              <span className="border-x border-slate-200 dark:border-cyber-gray-800">NODES: OLA</span>
               <span>GRID: EV-SECURE</span>
             </div>
           </div>
         </div>
 
         {/* Right Hand: Elegant glassmorphic register form card */}
-        <div className="w-full max-w-md bg-cyber-card/85 border border-cyber-gray-800 rounded-3xl p-8 shadow-2xl relative z-10 text-left backdrop-blur-md hover:border-cyber-green/20 transition-all duration-500">
+        <div className="w-full max-w-md bg-white/85 dark:bg-cyber-card/85 border border-slate-200 dark:border-cyber-gray-800 rounded-3xl p-8 shadow-2xl relative z-10 text-left backdrop-blur-md hover:border-cyber-green/20 transition-all duration-500">
           <div className="text-center mb-6">
             <h2 className="text-2xl font-extrabold text-white font-display">
               Create Account
@@ -301,7 +301,7 @@ const Register = ({ onRegisterSuccess }) => {
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Enter Full Name"
                       autoComplete="off"
-                      className="w-full bg-cyber-surface/60 border border-cyber-gray-800 focus:border-cyber-green rounded-xl py-2 pl-10 pr-4 text-white text-sm outline-none transition"
+                      className="w-full bg-slate-50 dark:bg-cyber-surface/60 border border-slate-200 dark:border-cyber-gray-800 focus:border-cyber-green rounded-xl py-2 pl-10 pr-4 text-slate-800 dark:text-white text-sm outline-none transition placeholder:text-slate-400 dark:placeholder:text-gray-600"
                     />
                     <User className="w-4 h-4 text-cyber-muted absolute left-3 top-3" />
                   </div>
@@ -319,7 +319,7 @@ const Register = ({ onRegisterSuccess }) => {
                       onChange={(e) => setUsername(e.target.value)}
                       placeholder="Enter Username"
                       autoComplete="off"
-                      className="w-full bg-cyber-surface/60 border border-cyber-gray-800 focus:border-cyber-green rounded-xl py-2 pl-10 pr-4 text-white text-sm outline-none transition"
+                      className="w-full bg-slate-50 dark:bg-cyber-surface/60 border border-slate-200 dark:border-cyber-gray-800 focus:border-cyber-green rounded-xl py-2 pl-10 pr-4 text-slate-800 dark:text-white text-sm outline-none transition placeholder:text-slate-400 dark:placeholder:text-gray-600"
                     />
                     <AtSign className="w-4 h-4 text-cyber-muted absolute left-3 top-3" />
                   </div>
@@ -337,7 +337,7 @@ const Register = ({ onRegisterSuccess }) => {
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="Enter Email Address"
                       autoComplete="off"
-                      className="w-full bg-cyber-surface/60 border border-cyber-gray-800 focus:border-cyber-green rounded-xl py-2 pl-10 pr-4 text-white text-sm outline-none transition"
+                      className="w-full bg-slate-50 dark:bg-cyber-surface/60 border border-slate-200 dark:border-cyber-gray-800 focus:border-cyber-green rounded-xl py-2 pl-10 pr-4 text-slate-800 dark:text-white text-sm outline-none transition placeholder:text-slate-400 dark:placeholder:text-gray-600"
                     />
                     <Mail className="w-4 h-4 text-cyber-muted absolute left-3 top-3" />
                   </div>
@@ -355,7 +355,7 @@ const Register = ({ onRegisterSuccess }) => {
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter Password"
                       autoComplete="new-password"
-                      className="w-full bg-cyber-surface/60 border border-cyber-gray-800 focus:border-cyber-green rounded-xl py-2 pl-10 pr-10 text-white text-sm outline-none transition"
+                      className="w-full bg-slate-50 dark:bg-cyber-surface/60 border border-slate-200 dark:border-cyber-gray-800 focus:border-cyber-green rounded-xl py-2 pl-10 pr-10 text-slate-800 dark:text-white text-sm outline-none transition placeholder:text-slate-400 dark:placeholder:text-gray-600"
                     />
                     <Lock className="w-4 h-4 text-cyber-muted absolute left-3 top-3" />
                     <button
@@ -380,7 +380,7 @@ const Register = ({ onRegisterSuccess }) => {
                     <select
                       value={vehicle}
                       onChange={(e) => setVehicle(e.target.value)}
-                      className="w-full bg-cyber-surface/60 border border-cyber-gray-800 focus:border-cyber-green rounded-xl py-2 pl-10 pr-4 text-white text-sm outline-none transition appearance-none cursor-pointer"
+                      className="w-full bg-slate-50 dark:bg-cyber-surface/60 border border-slate-200 dark:border-cyber-gray-800 focus:border-cyber-green rounded-xl py-2 pl-10 pr-4 text-slate-800 dark:text-white text-sm outline-none transition appearance-none cursor-pointer"
                     >
                       <option value="" disabled>
                         Select your vehicle model
@@ -397,7 +397,7 @@ const Register = ({ onRegisterSuccess }) => {
                 </div>
 
                 {vehicle === "Others" && (
-                  <div className="space-y-4 p-4 border border-cyber-gray-800 rounded-xl bg-cyber-surface/40">
+                  <div className="space-y-4 p-4 border border-slate-200 dark:border-cyber-gray-800 rounded-xl bg-slate-50/50 dark:bg-cyber-surface/40">
                     <div className="flex flex-col space-y-1.5">
                       <label className="text-[9px] font-bold text-cyber-muted uppercase tracking-wider">
                         Custom Vehicle Name
@@ -409,7 +409,7 @@ const Register = ({ onRegisterSuccess }) => {
                           value={customVehicleName}
                           onChange={(e) => setCustomVehicleName(e.target.value)}
                           placeholder="e.g. Ather 450X"
-                          className="w-full bg-cyber-surface/60 border border-cyber-gray-800 focus:border-cyber-green rounded-xl py-2 pl-10 pr-4 text-white text-sm outline-none transition"
+                          className="w-full bg-slate-50 dark:bg-cyber-surface/60 border border-slate-200 dark:border-cyber-gray-800 focus:border-cyber-green rounded-xl py-2 pl-10 pr-4 text-slate-800 dark:text-white text-sm outline-none transition placeholder:text-slate-400 dark:placeholder:text-gray-600"
                         />
                         <Car className="w-4 h-4 text-cyber-muted absolute left-3 top-3" />
                       </div>
@@ -429,7 +429,7 @@ const Register = ({ onRegisterSuccess }) => {
                             setCustomBatteryCapacity(e.target.value)
                           }
                           placeholder="e.g. 3.7"
-                          className="w-full bg-cyber-surface/60 border border-cyber-gray-800 focus:border-cyber-green rounded-xl py-2 pl-10 pr-4 text-white text-sm outline-none transition"
+                          className="w-full bg-slate-50 dark:bg-cyber-surface/60 border border-slate-200 dark:border-cyber-gray-800 focus:border-cyber-green rounded-xl py-2 pl-10 pr-4 text-slate-800 dark:text-white text-sm outline-none transition placeholder:text-slate-400 dark:placeholder:text-gray-600"
                         />
                         <Battery className="w-4 h-4 text-cyber-muted absolute left-3 top-3" />
                       </div>
@@ -457,7 +457,7 @@ const Register = ({ onRegisterSuccess }) => {
                       onKeyDown={(e) => handleOtpKeyDown(e, index)}
                       maxLength={6}
                       autoComplete={index === 0 ? "one-time-code" : "off"}
-                      className="w-12 h-12 bg-cyber-surface border border-cyber-gray-800 focus:border-cyber-green rounded-xl text-cyber-text text-lg font-bold outline-none transition text-center focus:bg-cyber-surface/80 shadow-inner font-cyber"
+                      className="w-12 h-12 bg-slate-50 dark:bg-cyber-surface border border-slate-200 dark:border-cyber-gray-800 focus:border-cyber-green rounded-xl text-slate-850 dark:text-cyber-text text-lg font-bold outline-none transition text-center focus:bg-slate-100 dark:focus:bg-cyber-surface/80 shadow-inner font-cyber"
                     />
                   ))}
                 </div>
@@ -499,17 +499,6 @@ const Register = ({ onRegisterSuccess }) => {
             >
               Sign In
             </Link>
-          </div>
-
-          {/* Sandbox telemetry guidance */}
-          <div className="mt-6 p-4 bg-cyber-surface border border-cyber-gray-800 rounded-xl text-[10px] text-cyber-muted font-mono leading-relaxed">
-            <span className="text-cyber-green font-bold uppercase tracking-wider block mb-1 font-cyber">
-              Sandbox Telemetry Hub
-            </span>
-            • Enter registration email to trigger a simulated secure Brevo OTP
-            request.
-            <br />• OTP code: use <span className="text-white">123456</span> to
-            complete sandbox vehicle database sync.
           </div>
         </div>
       </div>

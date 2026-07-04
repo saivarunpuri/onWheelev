@@ -125,7 +125,7 @@ router.post("/plan", async (req, res) => {
       }
     }
 
-    if (user) {
+    if (user && user.role !== 'admin') {
       const currentCredits =
         user.plannerCredits !== undefined ? user.plannerCredits : 10;
       if (currentCredits <= 0) {
@@ -171,9 +171,23 @@ router.post("/plan", async (req, res) => {
       duration = hours > 0 ? `${hours} h ${minutes} m` : `${minutes} m`;
     }
 
-    const evConfig = EV_MODELS[vehicleModel] || EV_MODELS["Tata Nexon EV Max"];
-    const capacityKWh = evConfig.capacity;
-    const rateWhPerKm = evConfig.consumption;
+    let capacityKWh = 40.5;
+    let rateWhPerKm = 150;
+
+    const savedVehicle = user && user.vehicles
+      ? user.vehicles.find(v => v.model === vehicleModel)
+      : null;
+
+    if (savedVehicle) {
+      capacityKWh = savedVehicle.capacity;
+      rateWhPerKm = savedVehicle.range 
+        ? Math.round((savedVehicle.capacity * 1000) / savedVehicle.range)
+        : (EV_MODELS[vehicleModel]?.consumption || 150);
+    } else {
+      const evConfig = EV_MODELS[vehicleModel] || EV_MODELS["Tata Nexon EV Max"];
+      capacityKWh = evConfig.capacity;
+      rateWhPerKm = evConfig.consumption;
+    }
 
     // Battery simulation logic
     const totalEnergyRequired = (distance * rateWhPerKm) / 1000; // in kWh
@@ -248,112 +262,130 @@ router.post("/plan", async (req, res) => {
     }
 
     // Intelligent EV Charging via Ola Maps Nearby Search
-    let segments = Math.ceil(distance / 150);
+    // Dynamic EV Charging Stop Planner based on range and battery limits
     let tempBattery = startBattery;
+    let accumulatedDistance = 0;
+    const maxRange = (capacityKWh * 1000) / rateWhPerKm; // Max range at 100% battery
 
     const sCoords = sourceCoords || { lat: 17.385, lng: 78.4867 };
     const dCoords = destCoords || { lat: 12.9716, lng: 77.5946 };
 
-    for (let i = 1; i < segments; i++) {
-      const stopDist = i * 150;
-      const segEnergyUsed = (150 * rateWhPerKm) / 1000;
-      const segBatteryDrop = (segEnergyUsed / capacityKWh) * 100;
+    // Plan stops when the next segment would drop the battery below 15%
+    while (accumulatedDistance < distance) {
+      const remainingDistance = distance - accumulatedDistance;
+      const energyNeededToDest = (remainingDistance * rateWhPerKm) / 1000;
+      const batteryDropToDest = (energyNeededToDest / capacityKWh) * 100;
 
-      tempBattery = Math.max(5, tempBattery - segBatteryDrop);
-
-      if (tempBattery < 25) {
-        const startingChargeAtStop = Math.round(tempBattery);
-        const finalChargeAtStop = 80;
-        const chargeGained = finalChargeAtStop - startingChargeAtStop;
-
-        tempBattery = finalChargeAtStop;
-
-        const fraction = stopDist / distance;
-        const stopLat = sCoords.lat + (dCoords.lat - sCoords.lat) * fraction;
-        const stopLng = sCoords.lng + (dCoords.lng - sCoords.lng) * fraction;
-
-        let stationName = `PowerGrid #${i}`;
-        let stationAddress = `National Highway Route, near Sector ${i}`;
-        let stationLat = parseFloat(stopLat.toFixed(5));
-        let stationLng = parseFloat(stopLng.toFixed(5));
-        let chargerPower = 60; // default 60kW
-
-        try {
-          const OLA_MAPS_API_KEY =
-            process.env.OLA_MAPS_API_KEY ||
-            "n7Ye8EtykeXTqU2wH2WBf7mq3SzwqK9ZProAtSD0";
-          const nearbyRes = await axios.get(
-            `https://api.olamaps.io/places/v1/nearbysearch?layers=venue&location=${stopLat},${stopLng}&api_key=${OLA_MAPS_API_KEY}`,
-            {
-              headers: {
-                "X-Request-Id": `req-${Date.now()}`,
-                Origin: "http://localhost:5173",
-              },
-            }
-          );
-
-          const places =
-            nearbyRes.data.predictions ||
-            nearbyRes.data.results ||
-            nearbyRes.data.places;
-          if (places && places.length > 0) {
-            const bestStation = places[0];
-            stationName =
-              bestStation.name || bestStation.description || stationName;
-            stationAddress =
-              bestStation.formatted_address ||
-              bestStation.description ||
-              stationAddress;
-
-            if (bestStation.geometry && bestStation.geometry.location) {
-              stationLat = bestStation.geometry.location.lat;
-              stationLng = bestStation.geometry.location.lng;
-            }
-
-            const kwMatch = stationName.match(/(\d+)\s*kw/i);
-            if (kwMatch && parseInt(kwMatch[1]) > 0) {
-              chargerPower = parseInt(kwMatch[1]);
-            } else {
-              const hash = Math.abs(Math.floor(stationLat * 1000));
-              chargerPower = hash % 2 === 0 ? 120 : 60;
-            }
-          }
-        } catch (err) {
-          console.warn(
-            "Ola Maps Nearby Search offline, using fallback station.",
-          );
-        }
-
-        computedStops.push({
-          name: stationName,
-          address: stationAddress,
-          chargerType: `${chargerPower} kW DC Fast Charger`,
-          outputPower: chargerPower,
-          chargeDurationMinutes: Math.round(
-            (chargeGained * capacityKWh * 60) / (chargerPower * 100),
-          ),
-          chargePercentageGained: chargeGained,
-          startingChargeAtStop,
-          finalChargeAtStop,
-          distanceFromStart: stopDist,
-          lat: stationLat,
-          lng: stationLng,
-        });
+      // If we can reach the destination directly with at least 15% battery remaining, no more stops are needed
+      if (tempBattery - batteryDropToDest >= 15) {
+        tempBattery = Math.max(5, Math.round(tempBattery - batteryDropToDest));
+        accumulatedDistance = distance;
+        break;
       }
+
+      // We must charge. Find the max distance we can go before hitting 15% battery
+      const usableBatteryPercent = tempBattery - 15;
+      let driveDistance = Math.floor((usableBatteryPercent / 100) * maxRange);
+
+      // Safety check to avoid infinite loops or tiny segments
+      if (driveDistance < 40) {
+        driveDistance = Math.min(remainingDistance, 50); // force a small step if already low
+      } else {
+        // Leave a 10% safety margin of the max drive distance so we don't hit absolute empty
+        driveDistance = Math.min(remainingDistance, Math.floor(driveDistance * 0.9));
+      }
+
+      const stopDist = accumulatedDistance + driveDistance;
+
+      // Calculate state of charge on arrival at the stop
+      const segEnergyUsed = (driveDistance * rateWhPerKm) / 1000;
+      const segBatteryDrop = (segEnergyUsed / capacityKWh) * 100;
+      const startingChargeAtStop = Math.max(5, Math.round(tempBattery - segBatteryDrop));
+
+      // Charge back to 80%
+      const finalChargeAtStop = 80;
+      const chargeGained = finalChargeAtStop - startingChargeAtStop;
+      tempBattery = finalChargeAtStop;
+      accumulatedDistance = stopDist;
+
+      const fraction = stopDist / distance;
+      const stopLat = sCoords.lat + (dCoords.lat - sCoords.lat) * fraction;
+      const stopLng = sCoords.lng + (dCoords.lng - sCoords.lng) * fraction;
+
+      let stationName = `Highway Grid Charger`;
+      let stationAddress = `National Highway Route, near km ${stopDist}`;
+      let stationLat = parseFloat(stopLat.toFixed(5));
+      let stationLng = parseFloat(stopLng.toFixed(5));
+      let chargerPower = 60; // default 60kW
+
+      try {
+        const OLA_MAPS_API_KEY =
+          process.env.OLA_MAPS_API_KEY ||
+          "n7Ye8EtykeXTqU2wH2WBf7mq3SzwqK9ZProAtSD0";
+        const nearbyRes = await axios.get(
+          `https://api.olamaps.io/places/v1/nearbysearch?layers=venue&location=${stopLat},${stopLng}&api_key=${OLA_MAPS_API_KEY}`,
+          {
+            headers: {
+              "X-Request-Id": `req-${Date.now()}`,
+              Origin: "http://localhost:5173",
+            },
+          }
+        );
+
+        const places =
+          nearbyRes.data.predictions ||
+          nearbyRes.data.results ||
+          nearbyRes.data.places;
+        if (places && places.length > 0) {
+          const bestStation = places[0];
+          stationName =
+            bestStation.name || bestStation.description || stationName;
+          stationAddress =
+            bestStation.formatted_address ||
+            bestStation.description ||
+            stationAddress;
+
+          if (bestStation.geometry && bestStation.geometry.location) {
+            stationLat = bestStation.geometry.location.lat;
+            stationLng = bestStation.geometry.location.lng;
+          }
+
+          const kwMatch = stationName.match(/(\d+)\s*kw/i);
+          if (kwMatch && parseInt(kwMatch[1]) > 0) {
+            chargerPower = parseInt(kwMatch[1]);
+          } else {
+            const hash = Math.abs(Math.floor(stationLat * 1000));
+            chargerPower = hash % 2 === 0 ? 120 : 60;
+          }
+        }
+      } catch (err) {
+        console.warn(
+          "Ola Maps Nearby Search offline, using fallback station.",
+        );
+      }
+
+      computedStops.push({
+        name: stationName,
+        address: stationAddress,
+        chargerType: `${chargerPower} kW DC Fast Charger`,
+        outputPower: chargerPower,
+        chargeDurationMinutes: Math.round(
+          (chargeGained * capacityKWh * 60) / (chargerPower * 100),
+        ),
+        chargePercentageGained: chargeGained,
+        startingChargeAtStop,
+        finalChargeAtStop,
+        distanceFromStart: stopDist,
+        lat: stationLat,
+        lng: stationLng,
+      });
     }
 
-    const lastSegDist =
-      distance -
-      (computedStops.length > 0
-        ? computedStops[computedStops.length - 1].distanceFromStart
-        : 0);
-    const lastSegEnergy = (lastSegDist * rateWhPerKm) / 1000;
-    const lastSegDrop = (lastSegEnergy / capacityKWh) * 100;
-    const arrivalBattery = Math.max(2, Math.round(tempBattery - lastSegDrop));
+    const arrivalBattery = tempBattery;
 
-    // Decrement user plannerCredits
-    let remainingCredits = 10;
-    if (user) {
+    // Decrement user plannerCredits (except for admins)
+    let remainingCredits = user ? (user.plannerCredits !== undefined ? user.plannerCredits : 10) : 10;
+    if (user && user.role !== 'admin') {
       user.plannerCredits = Math.max(
         0,
         (user.plannerCredits !== undefined ? user.plannerCredits : 10) - 1,

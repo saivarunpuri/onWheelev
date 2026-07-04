@@ -172,6 +172,7 @@ const StationsNearby = () => {
       return;
     }
     setIsLocating(true);
+    setLoading(true);
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setUserLocation({
@@ -186,6 +187,7 @@ const StationsNearby = () => {
         console.error("Error getting location:", error);
         alert("Unable to retrieve your location. Please check your browser permissions.");
         setIsLocating(false);
+        setLoading(false);
       }
     );
   };

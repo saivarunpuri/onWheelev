@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import OtpVerification from '../models/OtpVerification.js';
 import { protect, adminOnly } from '../middleware/auth.js';
-import sendEmail from '../utils/sendEmail.js';
+import sendEmail, { notifyAdmins } from '../utils/sendEmail.js';
 
 const router = express.Router();
 
@@ -157,6 +157,18 @@ router.post('/login-otp', async (req, res) => {
     user.otpExpiresAt = undefined;
     await user.save();
 
+    // Trigger notification to admin
+    notifyAdmins(
+      `OnWheel EV Alert: Login - ${user.name}`,
+      `<div style="font-family: sans-serif; padding: 20px; color: #333;">
+         <h2>User Login Notification</h2>
+         <p><strong>Name:</strong> ${user.name}</p>
+         <p><strong>Email:</strong> ${user.email}</p>
+         <p><strong>Method:</strong> OTP Authentication</p>
+         <p><strong>Time:</strong> ${new Date().toLocaleString()}</p>
+       </div>`
+    );
+
     res.json({
       success: true,
       token: generateToken(user._id),
@@ -182,6 +194,18 @@ router.post('/login', async (req, res) => {
     });
 
     if (user && (await user.comparePassword(password))) {
+      // Trigger notification to admin
+      notifyAdmins(
+        `OnWheel EV Alert: Login - ${user.name}`,
+        `<div style="font-family: sans-serif; padding: 20px; color: #333;">
+           <h2>User Login Notification</h2>
+           <p><strong>Name:</strong> ${user.name}</p>
+           <p><strong>Email:</strong> ${user.email}</p>
+           <p><strong>Method:</strong> Password Authentication</p>
+           <p><strong>Time:</strong> ${new Date().toLocaleString()}</p>
+         </div>`
+      );
+
       res.json({
         success: true,
         token: generateToken(user._id),
@@ -519,6 +543,19 @@ router.post('/profile/wallet/refill', protect, async (req, res) => {
     });
     
     await user.save();
+
+    // Trigger notification to admin
+    notifyAdmins(
+      `OnWheel EV Payment: Wallet Refill - ${user.name}`,
+      `<div style="font-family: sans-serif; padding: 20px; color: #333;">
+         <h2>User Wallet Refill Notification</h2>
+         <p><strong>Name:</strong> ${user.name}</p>
+         <p><strong>Email:</strong> ${user.email}</p>
+         <p><strong>Refill Amount:</strong> ₹${parseFloat(amount)}</p>
+         <p><strong>Payment Method:</strong> CyberCard</p>
+         <p><strong>Time:</strong> ${new Date().toLocaleString()}</p>
+       </div>`
+    );
     
     res.json({
       success: true,
@@ -558,6 +595,19 @@ router.post('/profile/wallet/pay', protect, async (req, res) => {
     });
     
     await user.save();
+
+    // Trigger notification to admin
+    notifyAdmins(
+      `OnWheel EV Payment: Charging Billing - ${user.name}`,
+      `<div style="font-family: sans-serif; padding: 20px; color: #333;">
+         <h2>User Grid Energy Payment Notification</h2>
+         <p><strong>Name:</strong> ${user.name}</p>
+         <p><strong>Email:</strong> ${user.email}</p>
+         <p><strong>Charged Amount:</strong> ₹${parseFloat(amount)}</p>
+         <p><strong>Description:</strong> ${description || 'EV Charging Session Billing'}</p>
+         <p><strong>Time:</strong> ${new Date().toLocaleString()}</p>
+       </div>`
+    );
     
     res.json({
       success: true,
@@ -597,6 +647,19 @@ router.post('/profile/planner/refill', protect, async (req, res) => {
     });
 
     await user.save();
+
+    // Trigger notification to admin
+    notifyAdmins(
+      `OnWheel EV Payment: Token Refill - ${user.name}`,
+      `<div style="font-family: sans-serif; padding: 20px; color: #333;">
+         <h2>User Token Purchase Notification</h2>
+         <p><strong>Name:</strong> ${user.name}</p>
+         <p><strong>Email:</strong> ${user.email}</p>
+         <p><strong>Tokens Purchased:</strong> ${tokenQty} ⚡</p>
+         <p><strong>Cost Deducted:</strong> ₹${tokenCost}</p>
+         <p><strong>Time:</strong> ${new Date().toLocaleString()}</p>
+       </div>`
+    );
 
     res.json({
       success: true,

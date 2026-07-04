@@ -76,27 +76,39 @@ const InteractiveMap = ({
   const [selectedPin, setSelectedPin] = useState(null);
   const [loadingRoute, setLoadingRoute] = useState(false);
   const [radarScanning, setRadarScanning] = useState(false);
+  const [mapLoading, setMapLoading] = useState(true);
 
   // Center coordinate - Geographic Center of India to show all of India initially
   const defaultCenter = [20.5937, 78.9629];
 
   // Initialize leaf map
   useEffect(() => {
+    let timer;
     if (!mapInstanceRef.current && window.L && mapContainerRef.current) {
       const map = window.L.map(mapContainerRef.current, {
         zoomControl: false,
+        attributionControl: false,
       }).setView(defaultCenter, 5);
 
       mapInstanceRef.current = map;
 
       // Render Light map layers
-      window.L.tileLayer(
+      const tiles = window.L.tileLayer(
         "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
         {
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a> | Powered by Ola Maps Routing & Places APIs',
           maxZoom: 20,
         }
       ).addTo(map);
+
+      tiles.on("load", () => {
+        setMapLoading(false);
+      });
+
+      // Fallback timer in case tile load event is cached/doesn't fire
+      timer = setTimeout(() => {
+        setMapLoading(false);
+      }, 1500);
 
       window.L.control.zoom({ position: "topright" }).addTo(map);
 
@@ -112,6 +124,7 @@ const InteractiveMap = ({
     }
 
     return () => {
+      if (timer) clearTimeout(timer);
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
@@ -708,6 +721,15 @@ const InteractiveMap = ({
       />
 
       <div ref={mapContainerRef} className="w-full h-full" />
+
+      {mapLoading && (
+        <div className="absolute inset-0 bg-[#ebeff2]/90 dark:bg-[#001616]/90 z-[1001] flex flex-col items-center justify-center space-y-3 backdrop-blur-sm">
+          <div className="animate-spin border-4 border-[#016A6A] dark:border-[#00F5D4] border-t-transparent w-10 h-10 rounded-full" />
+          <p className="text-xs text-[#016A6A] dark:text-[#00F5D4] font-cyber uppercase tracking-widest animate-pulse">
+            Loading interactive map...
+          </p>
+        </div>
+      )}
 
       {radarScanning && (
         <div className="radar-scanner">

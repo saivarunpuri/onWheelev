@@ -55,12 +55,27 @@ const TripPlanner = ({ setLastPlannerOutput, user, onProfileUpdate }) => {
       }))
     : [];
 
-  const availableModels = [
-    ...garageVehicles,
-    ...EV_MODELS.filter(preset => !garageVehicles.some(gv => gv.name === preset.name))
-  ];
+  const availableModels = garageVehicles.length > 0
+    ? garageVehicles
+    : EV_MODELS;
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user && user.vehicleModel) {
+      setVehicleModel(user.vehicleModel);
+    }
+  }, [user]);
+
+  // Ensure selected vehicleModel state is actually in the available list, preventing out-of-sync HTML select issues
+  useEffect(() => {
+    if (availableModels.length > 0) {
+      const isValid = availableModels.some(model => model.name === vehicleModel);
+      if (!isValid) {
+        setVehicleModel(availableModels[0].name);
+      }
+    }
+  }, [availableModels, vehicleModel]);
 
   useEffect(() => {
     return () => {
@@ -329,9 +344,9 @@ const TripPlanner = ({ setLastPlannerOutput, user, onProfileUpdate }) => {
         <form onSubmit={handlePlanSubmit} className="lg:col-span-5 bg-cyber-card border border-cyber-gray-800 rounded-2xl p-6 space-y-6 shadow-xl backdrop-blur-sm">
           
           {/* Premium Credits Banner Info */}
-          <div className="flex justify-between items-center bg-[#0d0e12] border border-cyber-gray-900 rounded-xl p-3">
-            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Premium intelligence API</span>
-            <span className={`px-2.5 py-1 text-[11px] font-mono font-bold rounded ${availableCredits > 0 ? 'bg-cyber-green/10 text-cyber-green border border-cyber-green/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'}`}>
+          <div className="flex justify-between items-center bg-[#f4f7f6] dark:bg-[#0c0e12] border border-slate-200/80 dark:border-cyber-gray-900 rounded-xl p-3">
+            <span className="text-[10px] font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider">Premium intelligence API</span>
+            <span className={`px-2.5 py-1 text-[11px] font-mono font-bold rounded ${availableCredits > 0 ? 'bg-[#00F5D4]/10 dark:bg-cyber-green/10 text-[#008A74] dark:text-cyber-green border border-[#008A74]/20 dark:border-cyber-green/20' : 'bg-red-500/10 dark:bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20'}`}>
               ⚡ {availableCredits} Tokens Left
             </span>
           </div>

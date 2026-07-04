@@ -65,28 +65,10 @@ const Navbar = ({ user, onLogout }) => {
     return activeLink ? activeLink.name : 'Dashboard';
   };
 
-  // Custom high-fidelity EV Charging Station brand logo component with gold charging bolt
   const ChargingStationLogo = ({ sizeClass = "w-6 h-6", pulse = false }) => (
-    <svg 
-      className={`${sizeClass} text-cyber-accent dark:text-cyber-green filter drop-shadow-[0_0_6px_rgba(245,212,0,0.35)] ${pulse ? 'animate-pulse' : ''} transition-transform duration-500`} 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
-      strokeLinejoin="round"
-    >
-      {/* Outer circular network ring */}
-      <circle cx="12" cy="12" r="10" strokeDasharray="3 3" />
-      {/* EV Charging Station body */}
-      <path d="M9 16V8.5A1.5 1.5 0 0 1 10.5 7h3A1.5 1.5 0 0 1 15 8.5V16" strokeWidth="1.8" />
-      {/* Display screen */}
-      <rect x="11" y="9.5" width="2" height="1.5" rx="0.5" className="fill-cyber-accent dark:fill-cyber-green stroke-none" />
-      {/* Charging cord looping on the side */}
-      <path d="M15 11h1a1 1 0 0 1 1 1v2" strokeWidth="1.5" />
-      {/* High-Contrast Bold Energy Gold Lightning Bolt */}
-      <path d="M12.5 5.5 L9.5 11.5 H13.5 L10.5 17.5" stroke="#F59E0B" strokeWidth="2.2" />
-    </svg>
+    <Zap 
+      className={`${sizeClass} text-[#F59E0B] filter drop-shadow-[0_0_8px_rgba(245,158,11,0.45)] ${pulse ? 'animate-pulse' : ''} transition-transform duration-500 fill-[#F59E0B]`} 
+    />
   );
 
   return (
@@ -102,7 +84,7 @@ const Navbar = ({ user, onLogout }) => {
           setIsHovered(false);
           setShowDropdown(false);
         }}
-        className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-slate-50/95 dark:bg-[#001616]/95 border border-slate-200/80 dark:border-cyber-gray-800/80 backdrop-blur-md shadow-[0_8px_32px_0_rgba(0,0,0,0.08)] dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] transition-all duration-500 ease-in-out
+        className={`fixed top-4 left-1/2 -translate-x-1/2 z-[5000] bg-slate-50/95 dark:bg-[#001616]/95 border border-slate-200/80 dark:border-cyber-gray-800/80 backdrop-blur-md shadow-[0_8px_32px_0_rgba(0,0,0,0.08)] dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] transition-all duration-500 ease-in-out
           ${isMobileOpen 
             ? 'flex flex-col justify-start w-[90%] max-w-[340px] h-[390px] rounded-3xl p-5 overflow-hidden' 
             : 'flex flex-row items-center justify-between h-14 rounded-full px-5 w-[290px] md:w-64'
@@ -253,7 +235,7 @@ const Navbar = ({ user, onLogout }) => {
               ) : (
                 <Link
                   to="/login"
-                  className="flex items-center justify-center h-8 px-4 rounded-full bg-cyber-accent dark:bg-cyber-green text-white dark:text-black font-bold text-xs shadow-md dark:shadow-[0_0_10px_rgba(0,245,212,0.2)] hover:scale-[1.02] active:scale-95 transition-all"
+                  className="flex items-center justify-center h-8 px-4 rounded-full bg-cyber-accent dark:bg-cyber-green text-[#ffffff] dark:text-black font-bold text-xs shadow-md dark:shadow-[0_0_10px_rgba(0,245,212,0.2)] hover:scale-[1.02] active:scale-95 transition-all"
                 >
                   Sign In
                 </Link>
@@ -344,7 +326,7 @@ const Navbar = ({ user, onLogout }) => {
                 <Link
                   to="/login"
                   onClick={() => setIsMobileOpen(false)}
-                  className="flex items-center justify-center h-9 px-5 rounded-xl bg-cyber-accent dark:bg-cyber-green text-white dark:text-black font-bold text-xs"
+                  className="flex items-center justify-center h-9 px-5 rounded-xl bg-cyber-accent dark:bg-cyber-green text-[#ffffff] dark:text-black font-bold text-xs"
                 >
                   Sign In
                 </Link>

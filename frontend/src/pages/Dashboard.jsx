@@ -40,9 +40,9 @@ const BUNDLES = [
     cost: 100,
     savings: null,
     color: "amber",
-    gradient: "from-amber-900/40 to-amber-800/10",
-    border: "border-amber-600/40",
-    highlight: "text-amber-400",
+    gradient: "from-amber-100/50 to-amber-50/20 dark:from-amber-900/40 dark:to-amber-800/10",
+    border: "border-amber-400/60 dark:border-amber-600/40",
+    highlight: "text-amber-700 dark:text-amber-400",
     glow: "shadow-amber-500/10",
     badge: null,
   },
@@ -53,9 +53,9 @@ const BUNDLES = [
     cost: 250,
     savings: 50,
     color: "slate",
-    gradient: "from-slate-700/50 to-slate-600/10",
-    border: "border-slate-400/50",
-    highlight: "text-slate-300",
+    gradient: "from-slate-100 to-slate-50/50 dark:from-slate-700/50 dark:to-slate-600/10",
+    border: "border-slate-300 dark:border-slate-400/50",
+    highlight: "text-slate-700 dark:text-slate-300",
     glow: "shadow-slate-400/10",
     badge: "Most Popular",
   },
@@ -66,9 +66,9 @@ const BUNDLES = [
     cost: 700,
     savings: 300,
     color: "yellow",
-    gradient: "from-yellow-900/40 to-yellow-700/10",
-    border: "border-yellow-500/50",
-    highlight: "text-yellow-400",
+    gradient: "from-yellow-100/50 to-yellow-50/20 dark:from-yellow-900/40 dark:to-yellow-700/10",
+    border: "border-yellow-400/60 dark:border-yellow-500/50",
+    highlight: "text-yellow-700 dark:text-yellow-400",
     glow: "shadow-yellow-400/10",
     badge: "Best Value",
   },
@@ -172,11 +172,11 @@ const TokenRefillPaymentModal = ({ user, onClose, onSuccess }) => {
   return (
     <div
       className="token-modal-overlay fixed inset-0 z-[200] flex items-center justify-center p-4"
-      style={{ background: "rgba(5,6,10,0.88)", backdropFilter: "blur(8px)" }}
+      style={{ background: "rgba(5,6,10,0.75)", backdropFilter: "blur(8px)" }}
     >
-      <div className="token-modal-panel relative w-full max-w-xl bg-[#111318] border border-cyber-gray-800 rounded-2xl shadow-2xl overflow-hidden">
+      <div className="token-modal-panel relative w-full max-w-xl bg-white dark:bg-[#111318] border border-slate-200 dark:border-cyber-gray-800 rounded-2xl shadow-2xl overflow-hidden text-slate-800 dark:text-white">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-cyber-gray-800 bg-gradient-to-r from-cyber-green/5 to-transparent">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-cyber-gray-800 bg-gradient-to-r from-cyber-green/5 to-transparent">
           <div className="flex items-center space-x-2.5">
             <div className="p-1.5 bg-cyber-green/15 rounded-lg">
               <Package className="w-4 h-4 text-cyber-green" />
@@ -192,7 +192,7 @@ const TokenRefillPaymentModal = ({ user, onClose, onSuccess }) => {
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg hover:bg-cyber-gray-800 text-gray-500 hover:text-white transition"
+            className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-cyber-gray-800 text-slate-400 dark:text-gray-500 hover:text-slate-800 dark:hover:text-white transition"
           >
             <X className="w-4 h-4" />
           </button>
@@ -202,17 +202,17 @@ const TokenRefillPaymentModal = ({ user, onClose, onSuccess }) => {
         {step === "select" && (
           <div className="p-6 space-y-5">
             {/* Current balance strip */}
-            <div className="flex items-center justify-between bg-[#0b0c10] border border-cyber-gray-900 rounded-xl px-4 py-3 text-xs">
+            <div className="flex items-center justify-between bg-[#f0f4f4] dark:bg-[#0b0c10] border border-slate-200/80 dark:border-cyber-gray-900 rounded-xl px-4 py-3 text-xs">
               <span className="text-gray-500 font-mono tracking-wider">
                 WALLET BALANCE
               </span>
-              <span className="text-cyber-green font-extrabold font-mono">
+              <span className="text-[#008A74] dark:text-cyber-green font-extrabold font-mono">
                 ₹{walletBalance.toLocaleString()}
               </span>
               <span className="text-gray-500 font-mono tracking-wider">
                 CURRENT TOKENS
               </span>
-              <span className="text-cyber-accent font-extrabold font-mono">
+              <span className="text-[#016A6A] dark:text-cyber-accent font-extrabold font-mono">
                 ⚡ {plannerCredits}
               </span>
             </div>
@@ -225,8 +225,8 @@ const TokenRefillPaymentModal = ({ user, onClose, onSuccess }) => {
                   onClick={() => setSelectedBundle(b)}
                   className={`relative p-4 rounded-xl border text-left transition-all duration-200 bg-gradient-to-br ${b.gradient} ${
                     selectedBundle.id === b.id
-                      ? `${b.border} ring-2 ring-offset-2 ring-offset-[#111318] ${b.border.replace("border-", "ring-")} shadow-lg ${b.glow}`
-                      : "border-cyber-gray-800 hover:border-cyber-gray-700"
+                      ? `${b.border} ring-2 ring-offset-2 ring-offset-white dark:ring-offset-[#111318] ${b.border.replace("border-", "ring-")} shadow-lg ${b.glow}`
+                      : "border-slate-200 dark:border-cyber-gray-800 hover:border-slate-300 dark:hover:border-cyber-gray-700"
                   }`}
                 >
                   {b.badge && (
@@ -272,34 +272,34 @@ const TokenRefillPaymentModal = ({ user, onClose, onSuccess }) => {
         {step === "checkout" && (
           <div className="p-6 space-y-5">
             {/* Order summary */}
-            <div className="bg-[#0b0c10] border border-cyber-gray-900 rounded-xl p-4 space-y-2.5">
+            <div className="bg-[#f0f4f4] dark:bg-[#0b0c10] border border-slate-200/80 dark:border-cyber-gray-900 rounded-xl p-4 space-y-2.5">
               <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">
                 Order Summary
               </p>
               <div className="flex justify-between text-xs">
-                <span className="text-gray-300">{selectedBundle.name}</span>
-                <span className="text-white font-bold">
+                <span className="text-gray-600 dark:text-gray-300">{selectedBundle.name}</span>
+                <span className="text-slate-800 dark:text-white font-bold">
                   ⚡ {selectedBundle.tokens} tokens
                 </span>
               </div>
               <div className="flex justify-between text-xs">
                 <span className="text-gray-400">Unit rate</span>
-                <span className="text-gray-300">
+                <span className="text-gray-500 dark:text-gray-300">
                   ₹{(selectedBundle.cost / selectedBundle.tokens).toFixed(1)} /
                   token
                 </span>
               </div>
               {selectedBundle.savings && (
                 <div className="flex justify-between text-xs">
-                  <span className="text-cyber-green">Bundle Discount</span>
-                  <span className="text-cyber-green font-bold">
+                  <span className="text-[#008A74] dark:text-cyber-green">Bundle Discount</span>
+                  <span className="text-[#008A74] dark:text-cyber-green font-bold">
                     −₹{selectedBundle.savings}
                   </span>
                 </div>
               )}
-              <div className="flex justify-between text-sm font-bold border-t border-cyber-gray-900 pt-2">
-                <span className="text-white">Total</span>
-                <span className="text-cyber-green">₹{selectedBundle.cost}</span>
+              <div className="flex justify-between text-sm font-bold border-t border-slate-200/80 dark:border-cyber-gray-900 pt-2">
+                <span className="text-slate-800 dark:text-white">Total</span>
+                <span className="text-[#008A74] dark:text-cyber-green">₹{selectedBundle.cost}</span>
               </div>
             </div>
 
@@ -308,17 +308,12 @@ const TokenRefillPaymentModal = ({ user, onClose, onSuccess }) => {
               <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">
                 Payment Method
               </p>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 {[
                   {
                     id: "wallet",
                     label: "CyberPass Wallet",
                     sub: `₹${walletBalance.toLocaleString()} avail.`,
-                  },
-                  {
-                    id: "card",
-                    label: "Debit / Credit",
-                    sub: "Simulated checkout",
                   },
                   { id: "upi", label: "UPI", sub: "Instant mock pay" },
                 ].map((m) => (
@@ -327,8 +322,8 @@ const TokenRefillPaymentModal = ({ user, onClose, onSuccess }) => {
                     onClick={() => setPayMethod(m.id)}
                     className={`p-2.5 rounded-xl border text-left transition-all text-[10px] ${
                       payMethod === m.id
-                        ? "border-cyber-green bg-cyber-green/10 text-cyber-green"
-                        : "border-cyber-gray-800 text-gray-400 hover:border-cyber-gray-700"
+                        ? "border-cyber-green bg-cyber-green/10 text-[#008A74] dark:text-cyber-green"
+                        : "border-slate-200 dark:border-cyber-gray-800 text-slate-500 dark:text-gray-400 hover:border-slate-300 dark:hover:border-cyber-gray-700"
                     }`}
                   >
                     <p className="font-bold">{m.label}</p>
@@ -356,14 +351,14 @@ const TokenRefillPaymentModal = ({ user, onClose, onSuccess }) => {
                   placeholder="Card Number (16 digits)"
                   value={cardNum}
                   onChange={(e) => setCardNum(formatCard(e.target.value))}
-                  className="w-full bg-[#0b0c10] border border-cyber-gray-900 focus:border-cyber-green rounded-lg py-2.5 px-3 text-white text-xs outline-none font-mono tracking-widest placeholder:text-gray-600"
+                  className="w-full bg-[#f5f7fa] dark:bg-[#0b0c10] border border-slate-200 dark:border-cyber-gray-900 focus:border-cyber-green rounded-lg py-2.5 px-3 text-slate-800 dark:text-white text-xs outline-none font-mono tracking-widest placeholder:text-gray-400 dark:placeholder:text-gray-600"
                 />
                 <input
                   type="text"
                   placeholder="Cardholder Name"
                   value={cardName}
                   onChange={(e) => setCardName(e.target.value)}
-                  className="w-full bg-[#0b0c10] border border-cyber-gray-900 focus:border-cyber-green rounded-lg py-2.5 px-3 text-white text-xs outline-none placeholder:text-gray-600"
+                  className="w-full bg-[#f5f7fa] dark:bg-[#0b0c10] border border-slate-200 dark:border-cyber-gray-900 focus:border-cyber-green rounded-lg py-2.5 px-3 text-slate-800 dark:text-white text-xs outline-none placeholder:text-gray-400 dark:placeholder:text-gray-600"
                 />
                 <div className="grid grid-cols-2 gap-3">
                   <input
@@ -374,7 +369,7 @@ const TokenRefillPaymentModal = ({ user, onClose, onSuccess }) => {
                     onChange={(e) =>
                       setCardExpiry(formatExpiry(e.target.value))
                     }
-                    className="bg-[#0b0c10] border border-cyber-gray-900 focus:border-cyber-green rounded-lg py-2.5 px-3 text-white text-xs outline-none font-mono placeholder:text-gray-600"
+                    className="bg-[#f5f7fa] dark:bg-[#0b0c10] border border-slate-200 dark:border-cyber-gray-900 focus:border-cyber-green rounded-lg py-2.5 px-3 text-slate-800 dark:text-white text-xs outline-none font-mono placeholder:text-gray-400 dark:placeholder:text-gray-600"
                   />
                   <input
                     type="password"
@@ -384,10 +379,10 @@ const TokenRefillPaymentModal = ({ user, onClose, onSuccess }) => {
                     onChange={(e) =>
                       setCardCvv(e.target.value.replace(/\D/g, "").slice(0, 4))
                     }
-                    className="bg-[#0b0c10] border border-cyber-gray-900 focus:border-cyber-green rounded-lg py-2.5 px-3 text-white text-xs outline-none font-mono placeholder:text-gray-600"
+                    className="bg-[#f5f7fa] dark:bg-[#0b0c10] border border-slate-200 dark:border-cyber-gray-900 focus:border-cyber-green rounded-lg py-2.5 px-3 text-slate-800 dark:text-white text-xs outline-none font-mono placeholder:text-gray-400 dark:placeholder:text-gray-600"
                   />
                 </div>
-                <p className="text-[9px] text-gray-600 flex items-center space-x-1">
+                <p className="text-[9px] text-gray-500 flex items-center space-x-1">
                   <Lock className="w-2.5 h-2.5" />
                   <span>Simulated secure card — no real charges</span>
                 </p>
@@ -402,9 +397,9 @@ const TokenRefillPaymentModal = ({ user, onClose, onSuccess }) => {
                   placeholder="Your UPI ID (e.g. driver@oksbi)"
                   value={mockUpi}
                   onChange={(e) => setMockUpi(e.target.value)}
-                  className="w-full bg-[#0b0c10] border border-cyber-gray-900 focus:border-cyber-accent rounded-lg py-2.5 px-3 text-white text-xs outline-none placeholder:text-gray-600 font-mono"
+                  className="w-full bg-[#f5f7fa] dark:bg-[#0b0c10] border border-slate-200 dark:border-cyber-gray-900 focus:border-cyber-accent rounded-lg py-2.5 px-3 text-slate-800 dark:text-white text-xs outline-none placeholder:text-gray-400 dark:placeholder:text-gray-600 font-mono"
                 />
-                <p className="text-[9px] text-gray-600 flex items-center space-x-1">
+                <p className="text-[9px] text-gray-500 flex items-center space-x-1">
                   <Lock className="w-2.5 h-2.5" />
                   <span>Mock UPI — simulated for testing only</span>
                 </p>
@@ -420,7 +415,7 @@ const TokenRefillPaymentModal = ({ user, onClose, onSuccess }) => {
             <div className="flex space-x-3">
               <button
                 onClick={() => setStep("select")}
-                className="flex-1 py-2.5 rounded-xl border border-cyber-gray-800 text-gray-400 text-xs font-bold uppercase tracking-wider hover:border-cyber-gray-700 transition"
+                className="flex-1 py-2.5 rounded-xl border border-slate-200 dark:border-cyber-gray-800 text-slate-500 dark:text-gray-400 text-xs font-bold uppercase tracking-wider hover:border-slate-300 dark:hover:border-cyber-gray-700 transition"
               >
                 ← Back
               </button>
@@ -488,22 +483,22 @@ const TokenRefillPaymentModal = ({ user, onClose, onSuccess }) => {
                 Your AI cockpit is now supercharged and ready.
               </p>
             </div>
-            <div className="w-full bg-[#0b0c10] border border-cyber-gray-900 rounded-xl p-4 space-y-1.5 text-xs text-left">
+            <div className="w-full bg-[#f0f4f4] dark:bg-[#0b0c10] border border-slate-200/80 dark:border-cyber-gray-900 rounded-xl p-4 space-y-1.5 text-xs text-left">
               <div className="flex justify-between">
                 <span className="text-gray-500">Bundle purchased</span>
-                <span className="text-white font-bold">
+                <span className="text-slate-800 dark:text-white font-bold">
                   {selectedBundle.name}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Tokens added</span>
-                <span className="text-cyber-green font-bold">
+                <span className="text-[#008A74] dark:text-cyber-green font-bold">
                   +{selectedBundle.tokens} ⚡
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Amount charged</span>
-                <span className="text-white font-bold">
+                <span className="text-slate-800 dark:text-white font-bold">
                   {payMethod === "wallet"
                     ? `₹${selectedBundle.cost} from Wallet`
                     : `₹${selectedBundle.cost} via ${payMethod.toUpperCase()}`}
@@ -561,7 +556,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
   // Payments States
   const [refillAmount, setRefillAmount] = useState("");
   const [isRefilling, setIsRefilling] = useState(false);
-  const [refillMode, setRefillMode] = useState("instant"); // 'instant' | 'manual'
+  const [refillMode, setRefillMode] = useState("manual"); // 'instant' | 'manual'
   const [manualMethod, setManualMethod] = useState("upi"); // 'upi' | 'qr'
   const [manualAmount, setManualAmount] = useState("");
   const [userUpiId, setUserUpiId] = useState("");
@@ -1423,7 +1418,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
                 className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all ${
                   isTabActive
                     ? "bg-cyber-green/10 text-cyber-green border-l-2 border-cyber-green"
-                    : "text-gray-300 hover:bg-cyber-hover hover:text-white"
+                    : "text-gray-300 hover:bg-cyber-green/10 hover:text-cyber-green"
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -2010,11 +2005,11 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
                 {/* Left Side: Pass & Refill */}
                 <div className="lg:col-span-5 space-y-6">
                   {/* Visual Cyber Card */}
-                  <div className="bg-gradient-to-br from-[#121212] to-[#08090C] border border-cyber-green/50 p-5 rounded-2xl h-44 flex flex-col justify-between shadow-cyber-glow relative overflow-hidden group">
+                  <div className="bg-gradient-to-br from-[#eef3f3] to-[#dce2e2] dark:from-[#121212] dark:to-[#08090C] border border-cyber-green/50 p-5 rounded-2xl h-44 flex flex-col justify-between shadow-cyber-glow relative overflow-hidden group">
                     <div className="absolute -right-10 -bottom-10 w-32 h-32 bg-cyber-green/5 rounded-full blur-2xl group-hover:bg-cyber-green/10 transition-all duration-500" />
                     <div className="flex justify-between items-start">
-                      <Zap className="w-6 h-6 text-cyber-green fill-cyber-green" />
-                      <span className="text-[8px] font-mono tracking-widest text-cyber-green border border-cyber-green px-1.5 py-0.5 rounded">
+                      <Zap className="w-6 h-6 text-[#008A74] dark:text-cyber-green fill-[#008A74] dark:fill-cyber-green" />
+                      <span className="text-[8px] font-mono tracking-widest text-[#008A74] dark:text-cyber-green border border-[#008A74]/50 dark:border-cyber-green/50 px-1.5 py-0.5 rounded">
                         CYBER_PASS
                       </span>
                     </div>
@@ -2037,7 +2032,7 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
                   </div>
 
                   {/* Premium AI Credits Card */}
-                  <div className="bg-gradient-to-br from-[#121212] to-[#08090C] border border-cyber-accent/50 p-5 rounded-2xl h-44 flex flex-col justify-between shadow-cyber-glow relative overflow-hidden group">
+                  <div className="bg-gradient-to-br from-[#eef3f3] to-[#dce2e2] dark:from-[#121212] dark:to-[#08090C] border border-cyber-accent/50 p-5 rounded-2xl h-44 flex flex-col justify-between shadow-cyber-glow relative overflow-hidden group">
                     <div className="absolute -right-10 -bottom-10 w-32 h-32 bg-cyber-accent/5 rounded-full blur-2xl group-hover:bg-cyber-accent/10 transition-all duration-500" />
                     <div className="flex justify-between items-start">
                       <Zap className="w-6 h-6 text-cyber-accent fill-cyber-accent" />
@@ -2068,86 +2063,17 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
                     </button>
                   </div>
 
-                  {/* Refill Form Panel with Instant vs UPI/QR Tabs */}
+                  {/* Refill Form Panel with UPI/QR Verification Only */}
                   <div className="bg-cyber-card border border-cyber-gray-800 p-5 rounded-2xl space-y-5">
                     <h4 className="font-bold text-white text-xs uppercase tracking-wider">
-                      Refill Pass Wallet
+                      Refill Pass Wallet (UPI / QR Verification)
                     </h4>
 
-                    {/* Tab Selector */}
-                    <div className="bg-[#0b0c10] border border-cyber-gray-900 rounded-xl p-1 flex">
-                      <button
-                        type="button"
-                        onClick={() => setRefillMode("instant")}
-                        className={`flex-1 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded transition ${
-                          refillMode === "instant"
-                            ? "bg-cyber-green text-black font-extrabold"
-                            : "text-gray-500 hover:text-white font-semibold"
-                        }`}
-                      >
-                        Instant Card
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setRefillMode("manual")}
-                        className={`flex-1 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded transition ${
-                          refillMode === "manual"
-                            ? "bg-cyber-accent text-black font-extrabold"
-                            : "text-gray-500 hover:text-white font-semibold"
-                        }`}
-                      >
-                        UPI / QR Verification
-                      </button>
-                    </div>
-
-                    {refillMode === "instant" ? (
-                      /* Original Instant Simulated Card Refill */
-                      <form onSubmit={handleRefillWallet} className="space-y-4">
-                        <div className="flex flex-col space-y-1.5 text-[10px] text-gray-500">
-                          <label className="font-bold uppercase tracking-wider">
-                            Refill Amount (₹)
-                          </label>
-                          <input
-                            type="number"
-                            required
-                            min="50"
-                            placeholder="e.g. 500"
-                            value={refillAmount}
-                            onChange={(e) => setRefillAmount(e.target.value)}
-                            className="w-full bg-[#0b0c10] border border-cyber-gray-900 focus:border-cyber-green rounded-lg py-2 px-3 text-white text-xs outline-none transition"
-                          />
-                        </div>
-
-                        {/* Quick values buttons */}
-                        <div className="grid grid-cols-3 gap-2">
-                          {[200, 500, 1000].map((amt) => (
-                            <button
-                              key={amt}
-                              type="button"
-                              onClick={() => setRefillAmount(amt.toString())}
-                              className="py-1 bg-[#0b0c10] hover:bg-cyber-green/10 text-gray-400 hover:text-cyber-green border border-cyber-gray-900 hover:border-cyber-green/20 rounded text-[10px] font-bold transition"
-                            >
-                              + ₹{amt}
-                            </button>
-                          ))}
-                        </div>
-
-                        <button
-                          type="submit"
-                          disabled={isRefilling}
-                          className="w-full btn-cyber-primary py-2 text-[10px] font-bold tracking-wider uppercase text-black"
-                        >
-                          {isRefilling
-                            ? "Processing CyberCard..."
-                            : "Refill Instantly"}
-                        </button>
-                      </form>
-                    ) : (
-                      /* Manual Payments Upload verified screenshot flow */
-                      <form
-                        onSubmit={handleManualPaymentSubmit}
-                        className="space-y-4 text-xs text-left"
-                      >
+                    {/* Manual Payments Upload verified screenshot flow */}
+                    <form
+                      onSubmit={handleManualPaymentSubmit}
+                      className="space-y-4 text-xs text-left"
+                    >
                         {/* Submethod Selection */}
                         <div className="flex space-x-3 text-[10px] font-bold">
                           <button
@@ -2344,7 +2270,6 @@ const Dashboard = ({ user, onLogout, onProfileUpdate }) => {
                             : "Submit Payment Verification"}
                         </button>
                       </form>
-                    )}
                   </div>
                 </div>
 

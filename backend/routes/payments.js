@@ -4,6 +4,7 @@ import PaymentVerification from '../models/PaymentVerification.js';
 import PaymentSettings from '../models/PaymentSettings.js';
 import User from '../models/User.js';
 import { protect, adminOnly } from '../middleware/auth.js';
+import { notifyAdmins } from '../utils/sendEmail.js';
 
 const router = express.Router();
 
@@ -70,6 +71,20 @@ router.post('/verify-submit', protect, async (req, res) => {
       utr,
       screenshotUrl
     });
+
+    // Trigger notification to admin
+    notifyAdmins(
+      `OnWheel EV Payment: Manual Verification Pending - ${req.user.name}`,
+      `<div style="font-family: sans-serif; padding: 20px; color: #333;">
+         <h2>Manual Payment Verification Pending</h2>
+         <p><strong>User:</strong> ${req.user.name} (${req.user.email})</p>
+         <p><strong>Amount:</strong> ₹${parseFloat(amount)}</p>
+         <p><strong>Method:</strong> ${paymentMethod.toUpperCase()}</p>
+         <p><strong>UTR:</strong> ${utr}</p>
+         <p><strong>Time:</strong> ${new Date().toLocaleString()}</p>
+         <p><a href="${screenshotUrl}" target="_blank" style="color: #00f5d4; font-weight: bold;">View Screenshot</a></p>
+       </div>`
+    );
 
     res.status(201).json({
       success: true,

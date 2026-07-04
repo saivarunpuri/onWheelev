@@ -61,7 +61,7 @@ const userSchema = new mongoose.Schema({
   ],
   walletBalance: {
     type: Number,
-    default: 1000
+    default: 70
   },
   plannerCredits: {
     type: Number,
@@ -76,8 +76,7 @@ const userSchema = new mongoose.Schema({
       }
     ],
     default: [
-      { amount: 500, description: 'Signup Promotional EV Credits Credited' },
-      { amount: -120, description: 'Initial DLF Cyber Charge Billing' }
+      { amount: 70, description: 'Signup Welcome EV Credits' }
     ]
   },
   role: {
