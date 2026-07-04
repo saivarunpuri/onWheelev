@@ -794,38 +794,38 @@ const InteractiveMap = ({
         )}
 
       {selectedPin && (
-        <div className="absolute bottom-4 left-4 right-4 md:right-auto md:w-80 bg-cyber-card/95 border border-cyber-gray-800 p-4 rounded-xl backdrop-blur-md shadow-2xl animate-fade-in z-[1000]">
+        <div className="absolute bottom-4 left-4 right-4 md:right-auto md:w-80 bg-white/95 dark:bg-cyber-card/95 border border-slate-200 dark:border-cyber-gray-800 p-4 rounded-xl backdrop-blur-md shadow-2xl animate-fade-in z-[1000]">
           <div className="flex justify-between items-start mb-2">
-            <h4 className="font-bold text-cyber-text text-sm">
+            <h4 className="font-bold text-slate-800 dark:text-cyber-text text-sm">
               {selectedPin.name || selectedPin.providerName}
             </h4>
             <button
               type="button"
               onClick={() => setSelectedPin(null)}
-              className="text-xs text-cyber-muted hover:text-cyber-text"
+              className="text-xs text-slate-500 hover:text-slate-800 dark:text-cyber-muted dark:hover:text-cyber-text"
             >
               ✕
             </button>
           </div>
 
-          <div className="text-xs space-y-2 text-cyber-muted">
-            <p className="flex items-center text-cyber-muted">
-              <Zap className="w-3.5 h-3.5 text-cyber-green mr-1.5" />
+          <div className="text-xs space-y-2 text-slate-600 dark:text-cyber-muted">
+            <p className="flex items-center text-slate-600 dark:text-cyber-muted">
+              <Zap className="w-3.5 h-3.5 text-[#008A74] dark:text-cyber-green mr-1.5" />
               <span>
                 {selectedPin.type || "Charging Port"} •{" "}
                 {selectedPin.power || 60} kW
               </span>
             </p>
-            <p className="flex items-center text-cyber-muted">
+            <p className="flex items-center text-slate-600 dark:text-cyber-muted">
               <span
-                className={`w-2 h-2 rounded-full mr-2 ${selectedPin.status === "Busy" ? "bg-red-500" : "bg-cyber-green"}`}
+                className={`w-2 h-2 rounded-full mr-2 ${selectedPin.status === "Busy" ? "bg-red-500" : "bg-[#008A74] dark:bg-cyber-green"}`}
               />
               <span className="capitalize">
                 {selectedPin.status || "Active Operations"}
               </span>
             </p>
             {selectedPin.rating && (
-              <p className="text-cyber-green font-semibold">
+              <p className="text-[#008A74] dark:text-cyber-green font-semibold">
                 ★ {selectedPin.rating} (Highly Rated)
               </p>
             )}
