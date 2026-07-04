@@ -63,10 +63,58 @@ router.post('/register', async (req, res) => {
       email,
       password,
       vehicleModel,
-      batteryCapacity
+      batteryCapacity,
+      vehicles: [{ model: vehicleModel, capacity: batteryCapacity }]
     });
 
     await OtpVerification.deleteOne({ email });
+
+    // Send welcome email to user
+    try {
+      await sendEmail({
+        email: user.email,
+        subject: 'Welcome to OnWheel EV!',
+        htmlContent: `
+          <div style="font-family: 'Inter', sans-serif; max-width: 500px; margin: 0 auto; background-color: #0b0c10; padding: 40px; border-radius: 16px; border: 1px solid #1f2937; color: #ffffff;">
+            <div style="text-align: center; margin-bottom: 30px;">
+              <h1 style="color: #4ade80; margin: 0; font-size: 28px; letter-spacing: -0.5px;">OnWheel <span style="color: #ffffff;">EV</span></h1>
+              <p style="color: #9ca3af; font-size: 12px; margin-top: 5px; text-transform: uppercase; letter-spacing: 2px;">Smart Trip Core</p>
+            </div>
+            
+            <div style="background-color: #121212; border: 1px solid #374151; padding: 30px; border-radius: 12px; text-align: center;">
+              <h2 style="margin-top: 0; color: #ffffff; font-size: 18px; font-weight: 500;">Welcome, ${user.name}!</h2>
+              <p style="color: #9ca3af; font-size: 14px; margin-bottom: 25px;">Your OnWheel EV account has been successfully created. We are excited to help you plan smart trips and locate EV charging coordinates dynamically.</p>
+              
+              <div style="background-color: #000000; padding: 15px; border-radius: 8px; border: 1px solid #4ade80; text-align: left;">
+                <p style="margin: 5px 0; color: #ffffff; font-size: 13px;"><strong>Username:</strong> ${user.username}</p>
+                <p style="margin: 5px 0; color: #ffffff; font-size: 13px;"><strong>Vehicle Model:</strong> ${user.vehicleModel}</p>
+                <p style="margin: 5px 0; color: #ffffff; font-size: 13px;"><strong>Battery Capacity:</strong> ${user.batteryCapacity} kWh</p>
+              </div>
+            </div>
+            
+            <p style="color: #6b7280; font-size: 11px; text-align: center; margin-top: 30px;">
+              &copy; ${new Date().getFullYear()} OnWheel EV Systems. All rights reserved.
+            </p>
+          </div>
+        `
+      });
+      console.log(`Welcome email sent to: ${user.email}`);
+    } catch (emailErr) {
+      console.error('Failed to send welcome email:', emailErr.message);
+    }
+
+    // Trigger notification to admin
+    notifyAdmins(
+      `OnWheel EV Alert: New Registration - ${user.name}`,
+      `<div style="font-family: sans-serif; padding: 20px; color: #333;">
+         <h2>New User Registered</h2>
+         <p><strong>Name:</strong> ${user.name}</p>
+         <p><strong>Username:</strong> ${user.username}</p>
+         <p><strong>Email:</strong> ${user.email}</p>
+         <p><strong>Vehicle Model:</strong> ${user.vehicleModel}</p>
+         <p><strong>Time:</strong> ${new Date().toLocaleString()}</p>
+       </div>`
+    );
 
     res.status(201).json({
       success: true,

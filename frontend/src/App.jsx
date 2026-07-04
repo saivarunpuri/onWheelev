@@ -53,17 +53,9 @@ function App() {
             setUser(res.data.user);
           }
         } catch (err) {
-          console.warn('Backend server offline during startup check. Loading simulated user credentials if token exists...');
-          if (token === 'simulated_jwt_token_key') {
-            setUser({
-              _id: 'user-id-987',
-              name: 'Arjun EV Driver',
-              email: 'driver@onwheel.ev',
-              vehicleModel: 'Tata Nexon EV Max',
-              batteryCapacity: 40.5,
-              role: 'user'
-            });
-          }
+          console.warn('Backend server offline or invalid token during startup check.');
+          localStorage.removeItem('token');
+          localStorage.removeItem('tokenExpiry');
         }
       }
       setCheckingAuth(false);

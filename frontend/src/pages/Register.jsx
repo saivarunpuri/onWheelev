@@ -151,38 +151,7 @@ const Register = ({ onRegisterSuccess }) => {
       if (err.response && err.response.data && err.response.data.message) {
         setError(err.response.data.message);
       } else {
-        console.warn(
-          "Backend server offline, executing high-fidelity local registration simulation...",
-        );
-
-        // MOCK REGISTRATION SIMULATOR
-        if (registerStep === "details") {
-          setRegisterStep("verify");
-          toast.success("Simulated verification code sent to your email!");
-          return;
-        }
-
-        if (registerStep === "verify" && otp !== "123456") {
-          setError("Invalid OTP code. Use 123456 for testing.");
-          return;
-        }
-
-        setTimeout(() => {
-          const mockUser = {
-            _id: "new-user-" + Date.now(),
-            name,
-            email,
-            username,
-            vehicleModel: finalVehicleName,
-            batteryCapacity: finalBatteryCapacity,
-            role: "user",
-          };
-
-          localStorage.setItem("token", "simulated_jwt_token_key");
-          localStorage.setItem("tokenExpiry", Date.now() + 20 * 60 * 60 * 1000);
-          onRegisterSuccess(mockUser);
-          navigate("/dashboard");
-        }, 800);
+        setError("Server is offline. Please try again.");
       }
     }
   };
@@ -445,7 +414,7 @@ const Register = ({ onRegisterSuccess }) => {
                   We sent a verification code to{" "}
                   <span className="text-cyber-green font-bold">{email}</span>
                 </label>
-                <div className="flex justify-between space-x-2 mt-2">
+                <div className="grid grid-cols-6 gap-2 w-full max-w-xs mx-auto mt-2">
                   {[0, 1, 2, 3, 4, 5].map((index) => (
                     <input
                       key={index}
@@ -455,9 +424,9 @@ const Register = ({ onRegisterSuccess }) => {
                       value={otp[index] || ""}
                       onChange={(e) => handleOtpChange(e, index)}
                       onKeyDown={(e) => handleOtpKeyDown(e, index)}
-                      maxLength={6}
+                      maxLength={1}
                       autoComplete={index === 0 ? "one-time-code" : "off"}
-                      className="w-12 h-12 bg-slate-50 dark:bg-cyber-surface border border-slate-200 dark:border-cyber-gray-800 focus:border-cyber-green rounded-xl text-slate-850 dark:text-cyber-text text-lg font-bold outline-none transition text-center focus:bg-slate-100 dark:focus:bg-cyber-surface/80 shadow-inner font-cyber"
+                      className="aspect-square w-full bg-slate-50 dark:bg-cyber-surface border border-slate-200 dark:border-cyber-gray-800 focus:border-cyber-green rounded-xl text-slate-850 dark:text-cyber-text text-lg font-bold outline-none transition text-center focus:bg-slate-100 dark:focus:bg-cyber-surface/80 shadow-inner font-cyber"
                     />
                   ))}
                 </div>

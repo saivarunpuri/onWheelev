@@ -112,58 +112,7 @@ const Login = ({ onLoginSuccess }) => {
       if (err.response && err.response.data && err.response.data.message) {
         setError(err.response.data.message);
       } else {
-        console.warn(
-          "Backend server offline, executing high-fidelity local login simulation...",
-        );
-
-        // MOCK LOGIN SIMULATOR
-        const isAdmin =
-          emailOrUsername.toLowerCase() === "varun2004.pvt@gmail.com" ||
-          emailOrUsername.toLowerCase().includes("admin");
-
-        if (loginMethod === "password") {
-          if (isAdmin && password !== "admin123") {
-            setError("Invalid email or password");
-            return;
-          }
-          if (password.length < 8 && !isAdmin) {
-            setError("Invalid email or password");
-            return;
-          }
-        } else {
-          // Mock OTP
-          if (otpStep === "request") {
-            setOtpStep("verify");
-            toast.success("Simulated OTP sent to your email!");
-            return;
-          }
-          if (otpStep === "verify" && otp !== "123456") {
-            setError("Invalid OTP code. Use 123456 for testing.");
-            return;
-          }
-        }
-
-        // Let's create an elegant local mock session matching Admin if admin credentials entered
-        const mockUser = {
-          _id: isAdmin ? "admin-id-123" : "user-id-987",
-          name: isAdmin ? "Varun EV Admin" : emailOrUsername.split("@")[0],
-          email: emailOrUsername.includes("@")
-            ? emailOrUsername
-            : `${emailOrUsername}@onwheel.ev`,
-          username: emailOrUsername.includes("@")
-            ? emailOrUsername.split("@")[0]
-            : emailOrUsername,
-          vehicleModel: "Tata Nexon EV Max",
-          batteryCapacity: 40.5,
-          role: isAdmin ? "admin" : "user",
-        };
-
-        localStorage.setItem("token", "simulated_jwt_token_key");
-        localStorage.setItem("tokenExpiry", Date.now() + 20 * 60 * 60 * 1000);
-        onLoginSuccess(mockUser);
-        const redirect =
-          searchParams.get("redirect") || (isAdmin ? "/admin" : "/dashboard");
-        navigate(redirect);
+        setError("Server is offline. Please try again.");
       }
     }
   };
